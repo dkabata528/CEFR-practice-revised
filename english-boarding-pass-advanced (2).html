@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>English Boarding Pass — Advanced (B2–C2)</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap');
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+
+.epx-root {
+  font-family: 'Noto Sans JP', 'Hiragino Sans', sans-serif;
+  background: #0B1729;
+  color: #F3EFE4;
+  min-height: 100vh;
+  padding: 28px 14px 60px;
+}
+.epx-wrap { max-width: 720px; margin: 0 auto; }
+
+.epx-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.65;
+}
+.epx-display { font-family: 'Space Grotesk', sans-serif; }
+.epx-mono { font-family: 'JetBrains Mono', monospace; }
+
+.epx-ticket {
+  background: #F3EFE4;
+  color: #12213D;
+  border-radius: 20px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+  position: relative;
+}
+.epx-ticket-top { padding: 22px 24px 18px; }
+.epx-perf-row { position: relative; height: 0; }
+.epx-punch { position: absolute; top: -13px; width: 26px; height: 26px; border-radius: 50%; background: #0B1729; }
+.epx-punch.left { left: -13px; }
+.epx-punch.right { right: -13px; }
+.epx-perf-line { border-top: 2px dashed rgba(18,33,61,0.28); margin: 0 22px; }
+.epx-ticket-bottom { padding: 18px 24px 22px; }
+
+.epx-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(18,33,61,0.25);
+  background: transparent;
+  color: #12213D;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+}
+.epx-chip.active { background: #12213D; color: #F3EFE4; border-color: #12213D; }
+
+.epx-gatenav { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 20px 0; }
+.epx-gate-btn {
+  background: #12213D; color: #F3EFE4;
+  border: 1px solid rgba(243,239,228,0.12);
+  border-radius: 14px; padding: 12px 6px; text-align: center; cursor: pointer;
+}
+.epx-gate-btn.active { background: #E8A33D; color: #12213D; border-color: #E8A33D; }
+.epx-gate-letter { font-family: 'JetBrains Mono', monospace; font-size: 17px; font-weight: 700; display: block; }
+.epx-gate-label { font-size: 10.5px; margin-top: 3px; display: block; }
+
+.epx-card { background: #F3EFE4; color: #12213D; border-radius: 16px; padding: 22px; }
+
+.epx-btn {
+  font-family: 'Space Grotesk', sans-serif; font-weight: 600;
+  border-radius: 10px; padding: 10px 18px; cursor: pointer; border: none; font-size: 14px;
+}
+.epx-btn-primary { background: #12213D; color: #F3EFE4; }
+.epx-btn-secondary { background: transparent; color: #12213D; border: 1px solid rgba(18,33,61,0.3); }
+.epx-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.epx-tabbar { display: flex; gap: 8px; margin-bottom: 18px; }
+
+.epx-flashcard {
+  margin-top: 12px; min-height: 150px;
+  border: 1px solid rgba(18,33,61,0.15); border-radius: 14px; padding: 22px;
+  cursor: pointer; display: flex; flex-direction: column; justify-content: center;
+}
+
+.epx-choice {
+  display: block; width: 100%; text-align: left;
+  padding: 12px 16px; margin-bottom: 8px; border-radius: 10px;
+  border: 1px solid rgba(18,33,61,0.2);
+  background: #fff; cursor: pointer; font-size: 14px; color: #12213D;
+}
+.epx-choice.correct { background: #2F6E68; border-color: #2F6E68; color: #fff; }
+.epx-choice.incorrect { background: #C1553F; border-color: #C1553F; color: #fff; }
+.epx-choice.dim { opacity: 0.5; }
+
+.epx-passage-btn {
+  display: block; width: 100%; text-align: left; padding: 16px; margin-bottom: 10px;
+  border-radius: 12px; border: 1px solid rgba(18,33,61,0.15); background: #fff; cursor: pointer;
+}
+
+.epx-progress-track { height: 8px; background: rgba(18,33,61,0.12); border-radius: 999px; overflow: hidden; }
+.epx-progress-fill { height: 100%; background: #2F6E68; }
+
+.epx-barcode { display: flex; align-items: flex-end; gap: 2px; height: 28px; }
+.epx-bar { background: #12213D; opacity: 0.7; }
+
+/* Instructor-style explanation panel */
+.epx-explain {
+  margin-top: 12px; margin-bottom: 16px;
+  border-left: 3px solid rgba(18,33,61,0.15);
+  padding: 12px 10px 12px 14px;
+  background: rgba(18,33,61,0.03);
+  border-radius: 0 8px 8px 0;
+}
+.epx-explain-row { font-size: 13.5px; line-height: 1.75; margin-bottom: 10px; }
+.epx-explain-row:last-child { margin-bottom: 0; }
+.epx-explain-tag {
+  display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+  font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase;
+  padding: 2px 7px; border-radius: 5px; margin-right: 6px; vertical-align: 2px;
+  white-space: nowrap;
+}
+.epx-explain-tag.correct { background: rgba(47,110,104,0.16); color: #2F6E68; }
+.epx-explain-tag.wrong { background: rgba(193,85,63,0.16); color: #C1553F; }
+.epx-explain-tag.tip { background: rgba(232,163,61,0.22); color: #9C6423; }
+.epx-explain-tag.example { background: rgba(18,33,61,0.08); color: #5B5F66; }
+</style>
+</head>
+<body>
+<div class="epx-root"><div id="app" class="epx-wrap"></div></div>
+
+<script>
+/* ------------------------------------------------------------------ */
+/* Config                                                               */
+/* ------------------------------------------------------------------ */
+var QUIZ_SIZE = 10; /* number of questions sampled per quiz session (vocab & grammar) */
+
+/* ------------------------------------------------------------------ */
+/* Data: Vocabulary (90 words: 30 x B2 / C1 / C2)                       */
+/* ------------------------------------------------------------------ */
+
+var VOCAB = [
+  { id:'v1', level:'B2', topic:'Business', word:'corroborate', pos:'v.', ja:'裏付ける', example:"The witness's statement helped corroborate the initial findings.", exampleJa:'証人の証言は当初の調査結果を裏付けるのに役立った。',
+    note:'「他の証拠によって裏付ける」という意味の、ややフォーマルな動詞です。corroborate a claim / corroborate evidence のように使われ、confirm よりも「独立した別の情報源が一致することを示す」というニュアンスが強い語です。' },
+  { id:'v2', level:'B2', topic:'Business', word:'undermine', pos:'v.', ja:'弱体化させる、損なう', example:'Constant criticism can undermine team morale.', exampleJa:'絶え間ない批判はチームの士気を損なう可能性がある。',
+    note:'「徐々に、間接的に弱める」という意味で、undermine confidence / undermine authority のようにセットで覚えると便利です。内部から蝕むイメージの語です。' },
+  { id:'v3', level:'B2', topic:'General', word:'plausible', pos:'adj.', ja:'もっともらしい', example:"Her explanation for the delay sounded plausible.", exampleJa:'遅延に関する彼女の説明はもっともらしく聞こえた。',
+    note:'「一見もっともらしいが、真偽は定かでない」という含みを持つ形容詞です。correct や true とは使い分けが必要です。' },
+  { id:'v4', level:'B2', topic:'Business', word:'discretion', pos:'n.', ja:'裁量', example:"The manager has full discretion over the budget allocation.", exampleJa:'マネージャーは予算配分について全面的な裁量権を持っている。',
+    note:"at the manager's discretion（マネージャーの裁量で）のような形でよく使われます。「思慮深さ、口の堅さ」という意味の use discretion も便利です。" },
+  { id:'v5', level:'B2', topic:'Business', word:'leverage', pos:'n./v.', ja:'てこの作用、活用する', example:'The company used its market position to leverage better terms.', exampleJa:'その会社は市場での地位を活用してより良い条件を引き出した。',
+    note:'「（自分の持つ強みを）最大限に活用する」という比喩的な意味の動詞。leverage a relationship / leverage data のようにビジネス英語で非常に頻出です。' },
+  { id:'v6', level:'B2', topic:'Business', word:'contingency', pos:'n.', ja:'不測の事態', example:'We need a contingency plan in case the shipment is delayed.', exampleJa:'出荷が遅れた場合に備えて不測の事態への対応計画が必要だ。',
+    note:'常に plan とセットで a contingency plan（緊急時対応計画）という形で使われることがほとんどです。' },
+  { id:'v7', level:'B2', topic:'Business', word:'streamline', pos:'v.', ja:'効率化する', example:'The new software helped streamline the approval process.', exampleJa:'新しいソフトウェアは承認プロセスの効率化に役立った。',
+    note:'複雑な手続きをシンプルにするニュアンスがあり、simplify よりも業務改善の文脈でよく使われます。' },
+  { id:'v8', level:'B2', topic:'General', word:'resilient', pos:'adj.', ja:'回復力のある', example:'The economy proved resilient despite the downturn.', exampleJa:'経済は景気後退にもかかわらず回復力を示した。',
+    note:'名詞形 resilience（回復力）も合わせて覚えておくと表現の幅が広がります。' },
+  { id:'v9', level:'B2', topic:'General', word:'subsequent', pos:'adj.', ja:'その後の', example:'The subsequent meeting addressed the remaining issues.', exampleJa:'その後の会議で残りの課題が話し合われた。',
+    note:'later よりもフォーマルでレポートで頻出。subsequent to（〜の後に）という前置詞的な使い方もあります。' },
+  { id:'v10', level:'B2', topic:'Business', word:'viable', pos:'adj.', ja:'実行可能な', example:'Is remote work a viable option for this role?', exampleJa:'この職務においてリモートワークは実行可能な選択肢だろうか。',
+    note:'possible よりも実現性の高さを強調したいときに使う形容詞です。a viable business model のように使います。' },
+  { id:'v11', level:'B2', topic:'Business', word:'facilitate', pos:'v.', ja:'促進する、容易にする', example:'The new software facilitates communication between departments.', exampleJa:'新しいソフトウェアは部門間のコミュニケーションを促進する。',
+    note:'help よりもフォーマルでビジネス文書に頻出。facilitate a discussion/process のように使われます。' },
+  { id:'v12', level:'B2', topic:'Legal', word:'comply', pos:'v.', ja:'従う、遵守する', example:'All staff must comply with the new safety regulations.', exampleJa:'全社員は新しい安全規則を遵守しなければならない。',
+    note:'comply with ~ の形で使います。obey よりもフォーマルで、規則・法令の文脈で使われます。' },
+  { id:'v13', level:'B2', topic:'Business', word:'entail', pos:'v.', ja:'伴う、必要とする', example:'The new role entails significant travel.', exampleJa:'その新しい役職はかなりの出張を伴う。',
+    note:'involve と似ていますが、entail は「避けられない結果として伴う」というニュアンスが強い語です。' },
+  { id:'v14', level:'B2', topic:'Business', word:'deploy', pos:'v.', ja:'配備する、展開する', example:'The company plans to deploy the new system next quarter.', exampleJa:'会社は来四半期に新しいシステムを展開する予定だ。',
+    note:'元は軍事用語ですが、ビジネス・ITの文脈で「（人員・システムを）配置・展開する」という意味で広く使われます。' },
+  { id:'v15', level:'B2', topic:'General', word:'preliminary', pos:'adj.', ja:'予備的な', example:'The preliminary results are promising, but further testing is needed.', exampleJa:'予備的な結果は有望だが、さらなる検証が必要だ。',
+    note:'preliminary findings/results/discussion のように名詞を修飾する形でよく使われます。' },
+  { id:'v16', level:'B2', topic:'Legal', word:'dispute', pos:'n./v.', ja:'紛争、争う', example:'The two companies are locked in a legal dispute over patent rights.', exampleJa:'両社は特許権を巡る法的紛争のさなかにある。',
+    note:'be in dispute over / dispute a claim のように使います。conflict よりもフォーマルです。' },
+  { id:'v17', level:'B2', topic:'General', word:'allege', pos:'v.', ja:'主張する、申し立てる', example:'The report alleges that funds were misused.', exampleJa:'その報告書は資金が不正に使用されたと主張している。',
+    note:'claim よりも「真偽が未確認である」というニュアンスが強い、報道・法律の文脈でよく使われる動詞です。' },
+  { id:'v18', level:'B2', topic:'General', word:'render', pos:'v.', ja:'〜にする、提供する', example:'The error rendered the entire report unreliable.', exampleJa:'そのミスは報告書全体を信頼できないものにした。',
+    note:'render + O + C で「OをCの状態にする」という意味。make よりフォーマル。render a service（サービスを提供する）という意味もあります。' },
+  { id:'v19', level:'B2', topic:'General', word:'impede', pos:'v.', ja:'妨げる', example:'Heavy traffic impeded the delivery schedule.', exampleJa:'激しい交通渋滞が配送スケジュールを妨げた。',
+    note:'hinder とほぼ同義。impede progress のように使われます。' },
+  { id:'v20', level:'B2', topic:'Business', word:'inclusive', pos:'adj.', ja:'すべてを含んだ、包括的な', example:'The price is inclusive of tax and service charges.', exampleJa:'その価格には税とサービス料が含まれている。',
+    note:'be inclusive of ~ で「〜を含んだ」の意味。組織文化の文脈では an inclusive workplace のように「（多様性を）受け入れる」の意味でも頻出です。' },
+  { id:'v21', level:'B2', topic:'General', word:'presumably', pos:'adv.', ja:'おそらく', example:'Presumably, the delay was caused by the shipping strike.', exampleJa:'おそらく、その遅延は輸送ストライキが原因だった。',
+    note:'probably よりもやや形式ばった、論理的推測を示す副詞です。' },
+  { id:'v22', level:'B2', topic:'General', word:'prevalent', pos:'adj.', ja:'広く見られる、普及した', example:'Remote work has become prevalent across many industries.', exampleJa:'リモートワークは多くの業界で広く見られるようになった。',
+    note:'common よりもフォーマル。prevalent among/in のように使われます。' },
+  { id:'v23', level:'B2', topic:'General', word:'verify', pos:'v.', ja:'検証する', example:'Please verify the figures before submitting the report.', exampleJa:'報告書を提出する前に数字を検証してください。',
+    note:'confirm と似ていますが、verify は「証拠に基づいて事実確認する」というニュアンスが強い語です。' },
+  { id:'v24', level:'B2', topic:'Business', word:'jeopardize', pos:'v.', ja:'危険にさらす', example:'A single mistake could jeopardize the entire deal.', exampleJa:'一つのミスが取引全体を危険にさらしかねない。',
+    note:'risk よりも「取り返しのつかない損失につながりうる」という深刻なニュアンスがあります。' },
+  { id:'v25', level:'B2', topic:'Business', word:'endorse', pos:'v.', ja:'支持する、承認する', example:'The board formally endorsed the new strategy.', exampleJa:'取締役会は新戦略を正式に承認した。',
+    note:'support よりもフォーマルで、公式な承認・推薦のニュアンスがあります。' },
+  { id:'v26', level:'B2', topic:'General', word:'controversy', pos:'n.', ja:'論争', example:'The proposal sparked considerable controversy among stakeholders.', exampleJa:'その提案は関係者の間でかなりの論争を引き起こした。',
+    note:'spark/cause controversy のように動詞とセットで使われます。形容詞形 controversial も合わせて覚えましょう。' },
+  { id:'v27', level:'B2', topic:'Legal', word:'mandate', pos:'n./v.', ja:'権限、義務付ける', example:'The new regulation mandates annual safety inspections.', exampleJa:'新しい規制は年次の安全点検を義務付けている。',
+    note:'動詞では「（規則が）義務付ける」、名詞では「（選挙などで得た）権限、負託」という意味になります。' },
+  { id:'v28', level:'B2', topic:'General', word:'underlying', pos:'adj.', ja:'根底にある', example:'The report fails to address the underlying causes of the problem.', exampleJa:'その報告書は問題の根本的な原因に触れていない。',
+    note:'underlying cause/issue/assumption のように使われる、表面には見えない根底の性質を表す語です。' },
+  { id:'v29', level:'B2', topic:'General', word:'adverse', pos:'adj.', ja:'不利な、有害な', example:'The medication may have adverse effects on some patients.', exampleJa:'その薬は一部の患者に有害な影響を与える可能性がある。',
+    note:'negative よりもフォーマル。adverse effect/impact/conditions のように使われます。' },
+  { id:'v30', level:'B2', topic:'Legal', word:'constitute', pos:'v.', ja:'構成する、〜にあたる', example:'This behavior may constitute a breach of contract.', exampleJa:'この行為は契約違反にあたる可能性がある。',
+    note:'「（部分が集まって全体を）構成する」、または「〜に相当する」という2つの用法を覚えておくと便利です。' },
+
+  { id:'v31', level:'C1', topic:'General', word:'ubiquitous', pos:'adj.', ja:'至る所にある', example:'Smartphones have become ubiquitous in modern workplaces.', exampleJa:'スマートフォンは現代の職場で至る所に見られるようになった。',
+    note:'everywhere よりも書き言葉的で、急速に広まって当たり前になったというニュアンスです。' },
+  { id:'v32', level:'C1', topic:'General', word:'discern', pos:'v.', ja:'見分ける', example:'It can be difficult to discern the true motive behind the proposal.', exampleJa:'その提案の真の動機を見分けるのは難しいことがある。',
+    note:'see や notice よりも「一見わかりにくいものを見抜く」という知的な判断のニュアンスが強い語です。' },
+  { id:'v33', level:'C1', topic:'Business', word:'pragmatic', pos:'adj.', ja:'実用的な', example:'The team took a pragmatic approach to solving the budget shortfall.', exampleJa:'チームは予算不足を解決するために実用的なアプローチを取った。',
+    note:'idealistic の対義語として使われることが多く、a pragmatic approach というコロケーションで頻出します。' },
+  { id:'v34', level:'C1', topic:'Business', word:'inherent', pos:'adj.', ja:'固有の', example:'There are inherent risks in expanding into a new market.', exampleJa:'新しい市場への進出には固有のリスクが伴う。',
+    note:'inherent risk / inherent value のように、後から付け加えられたのではなく元々内在する性質を表します。' },
+  { id:'v35', level:'C1', topic:'Legal', word:'circumvent', pos:'v.', ja:'回避する、抜け道を使う', example:'The clause was designed to prevent parties from circumventing the agreement.', exampleJa:'その条項は当事者が合意を回避するのを防ぐために設けられた。',
+    note:'avoid よりもネガティブなニュアンス（抜け道を使う）を含みます。' },
+  { id:'v36', level:'C1', topic:'Academic', word:'paradigm', pos:'n.', ja:'パラダイム、枠組み', example:'The shift to remote work represented a paradigm change in office culture.', exampleJa:'リモートワークへの移行はオフィス文化におけるパラダイムの変化を示した。',
+    note:'単独よりも a paradigm shift（パラダイムシフト）というフレーズで使われることが非常に多い語です。' },
+  { id:'v37', level:'C1', topic:'Academic', word:'juxtapose', pos:'v.', ja:'並置する', example:"The report juxtaposes last year's figures with this year's projections.", exampleJa:'その報告書は昨年の数値と今年の予測を並置している。',
+    note:'juxtapose A with B の形でよく使われ、compare よりも視覚的な対比のニュアンスが強い語です。' },
+  { id:'v38', level:'C1', topic:'General', word:'tenuous', pos:'adj.', ja:'希薄な、根拠が薄い', example:'The connection between the two events remains tenuous at best.', exampleJa:'2つの出来事の関連性は良くても希薄なままだ。',
+    note:'a tenuous connection / a tenuous argument のように、根拠の弱さを批判的に表現します。' },
+  { id:'v39', level:'C1', topic:'General', word:'proliferate', pos:'v.', ja:'急増する', example:'Online scams have proliferated in recent years.', exampleJa:'オンライン詐欺は近年急増している。',
+    note:'increase よりも制御が難しいほど急速に広がるニュアンスを持ちます。' },
+  { id:'v40', level:'C1', topic:'General', word:'inadvertently', pos:'adv.', ja:'不注意に、うっかり', example:'The email was inadvertently sent to the wrong department.', exampleJa:'そのメールは誤って別の部署に送られてしまった。',
+    note:'accidentally と似ていますが、うっかりミスによってというニュアンスが強く、報告書でよく使われます。' },
+  { id:'v41', level:'C1', topic:'Academic', word:'dichotomy', pos:'n.', ja:'二分法', example:'The article presents a false dichotomy between growth and sustainability.', exampleJa:'その記事は成長と持続可能性の間に誤った二分法を提示している。',
+    note:'本来もっと複雑なものを2つに単純化して対比させる考え方。a false dichotomy というコロケーションが頻出です。' },
+  { id:'v42', level:'C1', topic:'Academic', word:'corollary', pos:'n.', ja:'必然的な結果', example:'Increased automation is a natural corollary of technological progress.', exampleJa:'オートメーションの増加は技術進歩の当然の帰結である。',
+    note:'あることから論理的に導かれる結果を指すフォーマルな名詞。a corollary of/to ~ の形で使います。' },
+  { id:'v43', level:'C1', topic:'Business', word:'discretionary', pos:'adj.', ja:'裁量による', example:'Managers have discretionary authority over minor budget decisions.', exampleJa:'マネージャーは小規模な予算決定について裁量権を持つ。',
+    note:'discretion（裁量）の形容詞形。discretionary spending/authority のように使われます。' },
+  { id:'v44', level:'C1', topic:'General', word:'dispel', pos:'v.', ja:'払拭する', example:"The CEO's statement helped dispel rumors of an imminent merger.", exampleJa:'CEOの声明は差し迫った合併の噂を払拭するのに役立った。',
+    note:'dispel doubts/rumors/myths のように、疑念・不安・誤解を打ち消す文脈で使われます。' },
+  { id:'v45', level:'C1', topic:'General', word:'discrete', pos:'adj.', ja:'個別の、離散した', example:'The project was broken down into discrete phases.', exampleJa:'そのプロジェクトはいくつかの独立した段階に分けられた。',
+    note:'互いに独立しはっきり区別できるという意味。discreet（思慮深い、同音異義語）と綴りを混同しないよう注意しましょう。' },
+  { id:'v46', level:'C1', topic:'Business', word:'impetus', pos:'n.', ja:'弾み、推進力', example:'The new funding provided fresh impetus for the research program.', exampleJa:'新たな資金は研究プログラムに新しい弾みを与えた。',
+    note:'give/provide impetus to ~ という形でよく使われるフォーマルな名詞です。' },
+  { id:'v47', level:'C1', topic:'Legal', word:'impinge', pos:'v.', ja:'影響を及ぼす、侵害する', example:'The new regulations impinge on individual privacy rights.', exampleJa:'新しい規制は個人のプライバシー権に影響を及ぼしている。',
+    note:'impinge on/upon ~ の形で「（望ましくない形で）〜に影響を及ぼす」という意味になります。' },
+  { id:'v48', level:'C1', topic:'Business', word:'incumbent', pos:'adj./n.', ja:'現職の、在職者', example:'It is incumbent upon management to communicate changes clearly.', exampleJa:'変更点を明確に伝えることは経営陣の義務である。',
+    note:'be incumbent upon ~ to do の形で「〜することは（人）の義務である」という意味になります。' },
+  { id:'v49', level:'C1', topic:'General', word:'indispensable', pos:'adj.', ja:'不可欠な', example:'Clear communication is indispensable to effective teamwork.', exampleJa:'明確なコミュニケーションは効果的なチームワークに不可欠である。',
+    note:'essential よりも強調度が高い、なくてはならないという意味の形容詞です。' },
+  { id:'v50', level:'C1', topic:'General', word:'innocuous', pos:'adj.', ja:'無害な、当たり障りのない', example:'What seemed like an innocuous comment sparked a heated debate.', exampleJa:'無害に見えたコメントが激しい議論を引き起こした。',
+    note:'harmless と似ていますが、見た目は無害そうだがという含みを持つことが多い語です。' },
+  { id:'v51', level:'C1', topic:'General', word:'intrinsic', pos:'adj.', ja:'本質的な、固有の', example:"The painting's value is intrinsic, not merely a matter of market demand.", exampleJa:'その絵画の価値は本質的なものであり、単なる市場の需要の問題ではない。',
+    note:'inherent と似ていますが、外的要因とは無関係なそのもの自体の性質を特に強調する語です。' },
+  { id:'v52', level:'C1', topic:'General', word:'nuance', pos:'n.', ja:'微妙な違い', example:'The translation fails to capture the nuances of the original text.', exampleJa:'その翻訳は原文の微妙なニュアンスを捉えきれていない。',
+    note:'動詞 nuance（〜に細かい違いを加える）としても使われる語です。' },
+  { id:'v53', level:'C1', topic:'Business', word:'onerous', pos:'adj.', ja:'過重な、面倒な', example:'The new compliance requirements are seen as onerous by small businesses.', exampleJa:'新しいコンプライアンス要件は中小企業にとって過重だと見なされている。',
+    note:'burdensome とほぼ同義ですが、より書き言葉的な形容詞です。' },
+  { id:'v54', level:'C1', topic:'General', word:'peripheral', pos:'adj.', ja:'周辺的な、副次的な', example:'This issue is peripheral to the main argument of the report.', exampleJa:'この問題は報告書の主な論点にとっては周辺的なものだ。',
+    note:'central の対義語として使われることが多い語です。' },
+  { id:'v55', level:'C1', topic:'Business', word:'precarious', pos:'adj.', ja:'不安定な、危うい', example:"The company's financial position remains precarious.", exampleJa:'その会社の財務状況は依然として不安定なままだ。',
+    note:'unstable よりも、今にも崩れそうな危機感の強い形容詞です。' },
+  { id:'v56', level:'C1', topic:'Business', word:'redundant', pos:'adj.', ja:'余剰の、冗長な', example:'Several positions were made redundant during the restructuring.', exampleJa:'再編の際にいくつかの職位が余剰となった。',
+    note:'イギリス英語では「解雇された」という意味でも頻出。一般には不必要に重複した状態を指します。' },
+  { id:'v57', level:'C1', topic:'Business', word:'stringent', pos:'adj.', ja:'厳格な', example:'The new safety standards are far more stringent than before.', exampleJa:'新しい安全基準は以前よりもはるかに厳格だ。',
+    note:'strict よりもフォーマルで、規制や基準の文脈でよく使われます。' },
+  { id:'v58', level:'C1', topic:'Legal', word:'supersede', pos:'v.', ja:'取って代わる', example:'The new policy supersedes all previous guidelines.', exampleJa:'新しい方針は以前のすべてのガイドラインに取って代わる。',
+    note:'replace よりもフォーマルで、法律・規則文書に頻出です。' },
+  { id:'v59', level:'C1', topic:'Legal', word:'tantamount', pos:'adj.', ja:'同然の', example:'Failing to disclose the risk was tantamount to fraud.', exampleJa:'そのリスクを開示しなかったことは詐欺も同然だった。',
+    note:'be tantamount to ~ の形で「実質的に〜に等しい」という強い評価を下す表現です。' },
+  { id:'v60', level:'C1', topic:'Business', word:'vested', pos:'adj.', ja:'既得の', example:'Some board members have a vested interest in maintaining the status quo.', exampleJa:'一部の取締役は現状維持に既得権益を持っている。',
+    note:'a vested interest（既得権益）というコロケーションで頻出の形容詞です。' },
+
+  { id:'v61', level:'C2', topic:'General', word:'exacerbate', pos:'v.', ja:'悪化させる', example:'Delays in the supply chain exacerbated the shortage.', exampleJa:'サプライチェーンの遅延が不足をさらに悪化させた。',
+    note:'worsen とほぼ同義ですがよりフォーマル。深刻な事態に対して使われることが多い語です。' },
+  { id:'v62', level:'C2', topic:'General', word:'equivocal', pos:'adj.', ja:'あいまいな、二義的な', example:'His response to the accusation was deliberately equivocal.', exampleJa:'その告発に対する彼の返答は意図的にあいまいだった。',
+    note:'ambiguous と似ていますが、equivocal は「はっきり答えるのを避けている」というやや批判的なニュアンスを含みます。' },
+  { id:'v63', level:'C2', topic:'Business', word:'ostensibly', pos:'adv.', ja:'表向きは', example:'The meeting was ostensibly about budgeting, but really about restructuring.', exampleJa:'その会議は表向きは予算についてだったが、実際は組織再編についてだった。',
+    note:'ostensibly ... but actually ... のような対比構造とセットで使われることが非常に多い語です。' },
+  { id:'v64', level:'C2', topic:'Legal', word:'vindicate', pos:'v.', ja:'正当性を証明する', example:"The audit results ultimately vindicated her decision.", exampleJa:'監査結果は最終的に彼女の判断の正しさを証明した。',
+    note:'prove correct よりも「名誉が回復される」というニュアンスを含みます。' },
+  { id:'v65', level:'C2', topic:'General', word:'surreptitiously', pos:'adv.', ja:'こっそりと', example:'He surreptitiously copied the files before resigning.', exampleJa:'彼は退職前にこっそりファイルをコピーした。',
+    note:'secretly よりもフォーマルで、意図的に隠れて行動するニュアンスが強い語です。' },
+  { id:'v66', level:'C2', topic:'Business', word:'perfunctory', pos:'adj.', ja:'おざなりな', example:'The review was little more than a perfunctory glance at the numbers.', exampleJa:'その見直しは数字をおざなりに眺めた程度に過ぎなかった。',
+    note:'形式だけは整っているが誠意や熱意が感じられない行為を批判的に表現します。' },
+  { id:'v67', level:'C2', topic:'Academic', word:'cogent', pos:'adj.', ja:'説得力のある', example:'She presented a cogent argument for restructuring the department.', exampleJa:'彼女は部門再編について説得力のある論拠を示した。',
+    note:'persuasive と似ていますが、論理構成がしっかりしていて反論しにくいというニュアンスが強い語です。' },
+  { id:'v68', level:'C2', topic:'General', word:'anachronistic', pos:'adj.', ja:'時代錯誤の', example:"Some of the company's policies now seem anachronistic.", exampleJa:'会社の一部の方針は今や時代遅れに見える。',
+    note:'outdated よりも、時代の流れから明らかに取り残されているという皮肉めいたニュアンスを含みます。' },
+  { id:'v69', level:'C2', topic:'Business', word:'profligate', pos:'adj.', ja:'浪費的な', example:"The board criticized the previous management's profligate spending.", exampleJa:'取締役会は前経営陣の浪費的な支出を批判した。',
+    note:'wasteful よりもフォーマルで強い非難のニュアンスを持ち、財務・経営の文脈でよく使われます。' },
+  { id:'v70', level:'C2', topic:'Business', word:'inextricably', pos:'adv.', ja:'密接に絡み合って', example:"The two companies' fortunes are now inextricably linked.", exampleJa:'2社の命運は今や密接に絡み合っている。',
+    note:'ほぼ必ず linked や connected とセットで使われます（inextricably linked）。' },
+  { id:'v71', level:'C2', topic:'General', word:'obfuscate', pos:'v.', ja:'曖昧にする、わかりにくくする', example:'Critics accused the company of using technical jargon to obfuscate the risks.', exampleJa:'批評家たちは、その会社がリスクを曖昧にするために専門用語を使っていると非難した。',
+    note:'意図的に分かりにくくするという強い批判的ニュアンスを持つ動詞です。' },
+  { id:'v72', level:'C2', topic:'Business', word:'capitulate', pos:'v.', ja:'屈服する', example:'After months of resistance, the board finally capitulated to shareholder demands.', exampleJa:'数ヶ月の抵抗の後、取締役会はついに株主の要求に屈した。',
+    note:'give in よりもフォーマルで、長期にわたる抵抗の末の屈服を示唆します。' },
+  { id:'v73', level:'C2', topic:'General', word:'inimical', pos:'adj.', ja:'有害な、敵対的な', example:'Such policies are inimical to long-term economic growth.', exampleJa:'そのような政策は長期的な経済成長にとって有害である。',
+    note:'be inimical to ~ の形で「〜にとって有害な」という意味になるフォーマルな形容詞です。' },
+  { id:'v74', level:'C2', topic:'General', word:'protracted', pos:'adj.', ja:'長引く', example:'The protracted negotiations finally concluded after two years.', exampleJa:'長引く交渉は2年を経てついに終結した。',
+    note:'long よりも、望ましくないほど長いというネガティブなニュアンスを含みます。' },
+  { id:'v75', level:'C2', topic:'Business', word:'recalcitrant', pos:'adj.', ja:'強情な、反抗的な', example:'The recalcitrant department refused to adopt the new procedures.', exampleJa:'その反抗的な部署は新しい手順の採用を拒んだ。',
+    note:'stubborn よりもフォーマルで、権威や指示に頑固に従わないニュアンスが強い語です。' },
+  { id:'v76', level:'C2', topic:'General', word:'sanguine', pos:'adj.', ja:'楽観的な', example:"Despite the setbacks, executives remain sanguine about the company's prospects.", exampleJa:'度重なる失敗にもかかわらず、経営陣は会社の見通しについて楽観的なままだ。',
+    note:'optimistic よりも文学的・フォーマルな響きを持つ形容詞です。' },
+  { id:'v77', level:'C2', topic:'Academic', word:'specious', pos:'adj.', ja:'もっともらしいが誤った', example:'The argument is specious; it sounds convincing but rests on a false premise.', exampleJa:'その主張はもっともらしいが誤りだ。説得力があるように聞こえるが、誤った前提に基づいている。',
+    note:'plausible よりもさらに批判的で、一見正しそうだが実は誤っているという強い非難のニュアンスを持ちます。' },
+  { id:'v78', level:'C2', topic:'General', word:'subvert', pos:'v.', ja:'覆す、転覆させる', example:'The scandal threatened to subvert public trust in the institution.', exampleJa:'そのスキャンダルは組織への社会的信頼を覆しかねなかった。',
+    note:'undermine より強い破壊的なニュアンスを持つ動詞です。' },
+  { id:'v79', level:'C2', topic:'General', word:'taciturn', pos:'adj.', ja:'無口な', example:'The new director was famously taciturn during board meetings.', exampleJa:'新しい取締役は取締役会で無口なことで有名だった。',
+    note:'quiet よりも、性格として言葉を発しないというニュアンスが強い語です。' },
+  { id:'v80', level:'C2', topic:'Academic', word:'unassailable', pos:'adj.', ja:'反論の余地のない', example:'Her argument, backed by extensive data, was virtually unassailable.', exampleJa:'豊富なデータに裏付けられた彼女の主張は、ほぼ反論の余地がなかった。',
+    note:'攻撃・反論することができないほど強固なという意味の形容詞です。' },
+  { id:'v81', level:'C2', topic:'Business', word:'unequivocal', pos:'adj.', ja:'明確な、疑いのない', example:'The board issued an unequivocal statement of support for the CEO.', exampleJa:'取締役会はCEOへの支持について明確な声明を出した。',
+    note:'equivocal（あいまいな）の反対語で、一切のあいまいさがない強い確信を表す語です。' },
+  { id:'v82', level:'C2', topic:'General', word:'vicarious', pos:'adj.', ja:'代理の、間接的な', example:'Many fans experience a vicarious sense of achievement when their team wins.', exampleJa:'多くのファンは、応援するチームが勝つと代理的な達成感を味わう。',
+    note:'自分では体験していないが他人の経験を通じて間接的に感じるという意味の形容詞です。' },
+  { id:'v83', level:'C2', topic:'Legal', word:'vitiate', pos:'v.', ja:'損なう、無効にする', example:'Procedural errors can vitiate an otherwise valid contract.', exampleJa:'手続き上のミスは、それ以外は有効な契約を無効にしうる。',
+    note:'法的・道徳的な有効性を損なうという意味の非常にフォーマルな動詞で、法律文書でよく使われます。' },
+  { id:'v84', level:'C2', topic:'General', word:'wanton', pos:'adj.', ja:'無分別な、無節操な', example:'The report criticized the wanton disregard for safety protocols.', exampleJa:'その報告書は安全プロトコルへの無分別な無視を批判した。',
+    note:'wanton disregard/destruction のように強い非難を込めて使われる形容詞です。' },
+  { id:'v85', level:'C2', topic:'Business', word:'zealous', pos:'adj.', ja:'熱心な、熱狂的な', example:'The new regulator has been notably zealous in pursuing compliance violations.', exampleJa:'新しい規制当局はコンプライアンス違反の追及に著しく熱心だ。',
+    note:'名詞形 zeal（熱意）も合わせて覚えておくと便利です。行き過ぎと感じられるほど熱心という含みがあります。' },
+  { id:'v86', level:'C2', topic:'Business', word:'acquiesce', pos:'v.', ja:'黙って従う', example:'Rather than object, the junior staff chose to acquiesce to the decision.', exampleJa:'反対するのではなく、若手社員はその決定に黙って従うことを選んだ。',
+    note:'acquiesce in/to ~ の形で「しぶしぶ受け入れる」という意味になるフォーマルな動詞です。' },
+  { id:'v87', level:'C2', topic:'Academic', word:'conflate', pos:'v.', ja:'混同する', example:'The article conflates two distinct legal concepts.', exampleJa:'その記事は2つの異なる法的概念を混同している。',
+    note:'confuse よりも、意図的または不注意に区別を失わせるという学術的なニュアンスを持ちます。' },
+  { id:'v88', level:'C2', topic:'Business', word:'disingenuous', pos:'adj.', ja:'不誠実な、見せかけの', example:'It would be disingenuous to claim the decision had no financial motive.', exampleJa:'その決定に金銭的な動機がなかったと主張するのは不誠実だろう。',
+    note:'dishonest よりも、表面上はもっともらしく見せているという皮肉なニュアンスを持つ語です。' },
+  { id:'v89', level:'C2', topic:'General', word:'exigent', pos:'adj.', ja:'緊急の、切迫した', example:'The team had to respond to the exigent demands of the crisis.', exampleJa:'チームは危機の切迫した要求に対応しなければならなかった。',
+    note:'名詞形 exigency（緊急事態）も合わせて覚えておくと便利なフォーマルな形容詞です。' },
+  { id:'v90', level:'C2', topic:'Business', word:'fastidious', pos:'adj.', ja:'几帳面な、細部にこだわる', example:'The auditor was known for being fastidious about every line item.', exampleJa:'その監査人はすべての項目について几帳面なことで知られていた。',
+    note:'基準が高く細部にまでこだわるという意味で、文脈により「神経質すぎる」という若干ネガティブな意味にもなります。' },
+];
+
+/* ------------------------------------------------------------------ */
+/* Data: Grammar (90 items: 30 x B2 / C1 / C2)                          */
+/* ------------------------------------------------------------------ */
+
+var GRAMMAR = [
+  { id:'g1', level:'B2', sentence:'Not only ___ the deadline, but the team also exceeded expectations.', choices:['did they meet','they met','did meet they','they did meet'], answerIndex:0,
+    explain:{ correct:'否定的な意味を持つ副詞句 Not only が文頭に出ると、主節は疑問文と同じ「助動詞＋主語＋動詞」の語順に倒置されます。ここでは一般動詞 meet の過去なので did they meet という形になります。',
+      wrong:'they met は倒置されていない通常の語順なので使えません。did meet they や they did meet は語順自体が誤りです。',
+      tip:'Not only, Never, Rarely, Little などの否定・準否定の副詞（句）が文頭に出ると倒置が起こる、というルールはB2以降で頻出です。' } },
+  { id:'g2', level:'B2', sentence:'Had we known about the delay earlier, we ___ different arrangements.', choices:['would make','would have made','will make','made'], answerIndex:1,
+    explain:{ correct:'文頭の Had we known は if we had known の倒置形で、仮定法過去完了（過去の事実と反対の仮定）を表します。帰結節には would have + 過去分詞が対応します。',
+      wrong:'would make や will make は過去の出来事についての仮定には合いません。made だけでは助動詞が抜けています。',
+      tip:'if が省略されて倒置が起こるのは had／were／should が文頭に来るときです：Had I known... ／ Were I you... ／ Should you need help...' } },
+  { id:'g3', level:'B2', sentence:'It was the finance director ___ raised the concern first.', choices:['who','which','whom','whose'], answerIndex:0,
+    explain:{ correct:'「It was X who/that ...」は「〜したのはXだった」と特定の人やモノを強調する強調構文です。Xが人の場合、who か that を使います。',
+      wrong:'which は物専用、whom は目的格、whose は所有格なのでいずれも主語の位置には合いません。',
+      tip:'It was ___ who/that ... の形をセットで覚えておきましょう。' } },
+  { id:'g4', level:'B2', sentence:'The proposal, ___ implications had not been fully considered, was rejected by the board.', choices:['whose','which','that','who'], answerIndex:0,
+    explain:{ correct:'whose は所有格を表す関係代名詞で、物（the proposal）にも使えます。「その提案の影響」という所有関係を表します。',
+      wrong:'which や that は所有の意味を表せません。who は人にしか使えません。',
+      tip:'whose は物にも使える、という点はB2以降で見落とされがちなポイントです。' } },
+  { id:'g5', level:'B2', sentence:'Rarely ___ such a comprehensive review been conducted in such a short time.', choices:['has','have','had','was'], answerIndex:0,
+    explain:{ correct:'Rarely が文頭に出ると倒置が起こります。主語 such a comprehensive review は単数扱いなので has been conducted に対応する has が正解です。',
+      wrong:'have は複数主語用、had は過去完了で時制が合わず、was では has been という形が崩れます。',
+      tip:'倒置構文では、まず時制と態を文全体から判断してから助動詞を選びましょう。' } },
+  { id:'g6', level:'B2', sentence:'The bridge ___ by a local construction company.', choices:['built','was built','has build','is building'], answerIndex:1,
+    explain:{ correct:'橋は「作られる」対象なので受動態が必要です。be動詞＋過去分詞（was built）が正解です。',
+      wrong:'built 単独では能動態で意味が逆になります。has build は文法的に誤り、is building は能動進行形で意味が逆です。',
+      tip:'「〜によって作られた」は be + 過去分詞 + by という基本パターンで表します。' } },
+  { id:'g7', level:'B2', sentence:'If it rains tomorrow, the outdoor ceremony ___ indoors.', choices:['will move','moves','would move','moved'], answerIndex:0,
+    explain:{ correct:'第一条件文（If＋現在形, will＋動詞原形）は実現可能性のある未来の条件を表します。',
+      wrong:'moves は主節の形として不適切、would move は第二条件文用、moved は時制が合いません。',
+      tip:'第一条件文は「起こりうる」未来、第二条件文は「起こりにくい」仮定という区別を意識しましょう。' } },
+  { id:'g8', level:'B2', sentence:'She wishes she ___ more languages when she was younger.', choices:['learned','had learned','learns','would learn'], answerIndex:1,
+    explain:{ correct:'wish＋主語＋had＋過去分詞は「過去にしなかったことを後悔する」表現です。',
+      wrong:'learned は現在の願望を表す wish＋過去形と混同されがちですが、過去の後悔には had learned が必要です。learns や would learn は時制が合いません。',
+      tip:'wish＋過去形＝現在の願望、wish＋had＋過去分詞＝過去の後悔、とセットで覚えましょう。' } },
+  { id:'g9', level:'B2', sentence:'By next year, she ___ at the company for a decade.', choices:['will work','will have worked','works','worked'], answerIndex:1,
+    explain:{ correct:'未来完了（will have＋過去分詞）は未来のある時点までに継続している状態を表します。',
+      wrong:'will work は単純未来で継続期間を表せません。works と worked は時制が合いません。',
+      tip:'By＋未来の時点、という表現は未来完了とセットで使われることが多い決まり文句です。' } },
+  { id:'g10', level:'B2', sentence:'The manager, along with two assistants, ___ attending the conference.', choices:['is','are','were','have been'], answerIndex:0,
+    explain:{ correct:'along with に続く語句は主語の数に影響しないため、動詞は主語 the manager（単数）に一致して is になります。',
+      wrong:'are/were/have been はいずれも複数扱いの誤りで、two assistants につられています。',
+      tip:'along with, together with, as well as, in addition to は「おまけ」的な情報として扱い、動詞の数は主語だけで決めます。' } },
+  { id:'g11', level:'B2', sentence:'Neither of the proposals ___ approved by the committee.', choices:['were','was','are','have been'], answerIndex:1,
+    explain:{ correct:'neither of＋複数名詞 は文法上は単数扱いなので was が正解です。',
+      wrong:'were/are/have been はいずれも複数扱いの誤りです。',
+      tip:'neither, either, each, everyone, nobody は形の上では複数を連想させますが、文法的には単数として扱われます。' } },
+  { id:'g12', level:'B2', sentence:'The report should ___ by Friday, according to the schedule.', choices:['complete','be completed','completing','have complete'], answerIndex:1,
+    explain:{ correct:'should の後には動詞の原形が続き、report は「完成される」対象なので受動態 be completed が正解です。',
+      wrong:'complete だけでは能動態になり意味が逆、completing は助動詞の後に使えません、have complete は文法的に誤りです。',
+      tip:'助動詞の後は必ず動詞の原形。受動の意味が必要な場合は「助動詞＋be＋過去分詞」の形になります。' } },
+  { id:'g13', level:'B2', sentence:'You ___ have called me sooner — I was worried sick!', choices:['should','must','might','would'], answerIndex:0,
+    explain:{ correct:'should have＋過去分詞は「〜すべきだったのに（しなかった）」という過去の行動への批判・後悔を表します。',
+      wrong:'must have は推量、might have は可能性、would have は仮定法の帰結節に使われる形で、いずれも非難のニュアンスには合いません。',
+      tip:'should have / must have / might have はすべて意味が異なるので文脈で判断しましょう。' } },
+  { id:'g14', level:'B2', sentence:'This machine needs ___ before we can use it again.', choices:['repair','repairing','to repairing','repaired'], answerIndex:1,
+    explain:{ correct:'need＋動名詞(-ing)は受動的な意味「〜される必要がある」を表す口語的な表現です（= needs to be repaired）。',
+      wrong:'repair は名詞的用法になり文法が崩れます。to repairing という形は存在しません。repaired 単体では続けられません。',
+      tip:'need/want/require＋-ing で「〜される必要がある」という受動的意味になる用法はB2以降で頻出です。' } },
+  { id:'g15', level:'B2', sentence:'___ you finish the report, please send it to me immediately.', choices:['As soon as','Since','Although','Unless'], answerIndex:0,
+    explain:{ correct:'as soon as は「〜するとすぐに」という時を表す接続詞で、文脈に合います。',
+      wrong:'since は理由・継続、although は譲歩、unless は「〜しない限り」で意味が逆になります。',
+      tip:'as soon as, once, the moment (that) はいずれも「〜するとすぐに」という意味で使える表現です。' } },
+  { id:'g16', level:'B2', sentence:"I'd rather you ___ smoke in this office.", choices:["don't","didn't","won't","wouldn't"], answerIndex:1,
+    explain:{ correct:'would rather＋主語＋過去形の否定形（didn\'t）で「（相手に）〜しないでほしい」という現在・未来への希望を表します。',
+      wrong:"don't は直説法なので願望が出ません。won't や wouldn't はこの構文には合いません。",
+      tip:"I'd rather you didn't ... は日常会話でも非常によく使われる、丁寧な依頼表現です。" } },
+  { id:'g17', level:'B2', sentence:'The higher the risk, ___ the potential reward.', choices:['higher','the higher','high','more high'], answerIndex:1,
+    explain:{ correct:'the＋比較級, the＋比較級 は「〜すればするほど」という相関構文で、後半にも the が必要です。',
+      wrong:'higher 単独や high, more high は構文として不完全・誤りです。',
+      tip:'The more you practice, the better you get. のようにセットで丸ごと覚えると応用が効きます。' } },
+  { id:'g18', level:'B2', sentence:'It\'s high time we ___ this issue seriously.', choices:['address','addressed','will address','are addressing'], answerIndex:1,
+    explain:{ correct:'It\'s (high) time＋主語＋過去形は「もう〜すべき時だ」という現在の必要性を表す慣用表現です。',
+      wrong:'address, will address, are addressing はこの構文の形として不適切です。',
+      tip:'It\'s time / It\'s about time / It\'s high time は後ろに過去形が続く特殊なルールを持つ頻出表現です。' } },
+  { id:'g19', level:'B2', sentence:'The data ___ collected over a five-year period.', choices:['was','were','has','is'], answerIndex:1,
+    explain:{ correct:'data は datum の複数形であり、特にアカデミックな文章では複数扱いとして were を使うのが伝統的に正しいとされます。',
+      wrong:'was/is は単数扱いの誤り（口語では容認されますがフォーマルな文章では避けるべきです）、has は受動態の形として不適切です。',
+      tip:'data, criteria, phenomena, media なども元は複数形で、フォーマルな文章では複数扱いされることを覚えておきましょう。' } },
+  { id:'g20', level:'B2', sentence:'I look forward to ___ from you soon.', choices:['hear','hearing','heard','have heard'], answerIndex:1,
+    explain:{ correct:'look forward to の to は前置詞なので、後ろには動名詞(-ing)が続きます。',
+      wrong:'hear（原形）や heard, have heard は前置詞toの後の形として不適切です。',
+      tip:'look forward to, be used to, object to など「to＋動名詞」を取る表現はまとめて覚えておくと便利です。' } },
+  { id:'g21', level:'B2', sentence:'Neither of the two candidates ___ the necessary experience — we may need to look elsewhere.', choices:['has','have','are having','were having'], answerIndex:0,
+    explain:{ correct:'neither of the two candidates は単数扱いなので has が正解です。',
+      wrong:'have/are having/were having はいずれも複数扱いまたは時制が不適切です。',
+      tip:'neither of ~ は必ず単数扱い、という点はB2以降でも間違えやすい定番の論点です。' } },
+  { id:'g22', level:'B2', sentence:'Scarcely ___ the presentation begun when the fire alarm went off.', choices:['had','has','did','was'], answerIndex:0,
+    explain:{ correct:'Scarcely ... when ... は「〜するとすぐに…した」という構文で、Scarcelyが文頭に出ると倒置(had＋主語＋過去分詞)が起こります。',
+      wrong:'has/did/was は時制・態が合いません。',
+      tip:'Scarcely/Hardly ... when/before ... と No sooner ... than ... はほぼ同義の倒置構文としてセットで覚えましょう。' } },
+  { id:'g23', level:'B2', sentence:'The committee is expected to reach ___ decision by the end of the week.', choices:['a','an','the','×'], answerIndex:0,
+    explain:{ correct:'初めて言及される「（特定されていない）ある決定」を指すので不定冠詞 a を使います。',
+      wrong:'an は母音の前専用、the は既出のものに使う冠詞、無冠詞は可算名詞単数には使えません。',
+      tip:'可算名詞の単数形には必ず何らかの冠詞が必要、という基本は上級者でも見落としがちです。' } },
+  { id:'g24', level:'B2', sentence:'Having reviewed all the evidence, the jury ___ to a unanimous verdict.', choices:['arrived','arriving','arrive','was arrived'], answerIndex:0,
+    explain:{ correct:'Having reviewed ... は分詞構文で「〜し終えた後」を表し、主節には通常の定形動詞（過去形 arrived）が続きます。',
+      wrong:'arriving は動詞が2つ分詞構文になり主節の動詞になれません。arrive は時制が合いません。was arrived は自動詞のため受動態にできません。',
+      tip:'Having＋過去分詞は「〜した後で」を表す完了形分詞構文で、主節には定形動詞を置くのを忘れないようにしましょう。' } },
+  { id:'g25', level:'B2', sentence:'Not until the results were announced ___ the true extent of the problem.', choices:['did we realize','we realized','we did realize','realized we'], answerIndex:0,
+    explain:{ correct:'Not until ... が文頭に出ると倒置が起こり、did＋主語＋動詞の原形の語順になります。',
+      wrong:'we realized は通常語順、we did realize も語順が誤り、realized we という語順は存在しません。',
+      tip:'Not until, Only when, Only after などの「〜して初めて」という表現はすべて同じ倒置パターンを取ります。' } },
+  { id:'g26', level:'B2', sentence:"The new regulation applies to all employees, ___ their position or seniority.", choices:['regardless of','regarding','in regard','without regard'], answerIndex:0,
+    explain:{ correct:'regardless of は「〜に関係なく」という意味の前置詞句で、後ろに名詞が続きます。',
+      wrong:'regarding は「〜に関して」で意味が異なり、in regard 単独では機能せず、without regard も前置詞として不完全です。',
+      tip:'regardless of と despite / in spite of はどちらも「〜に関わらず」に近い意味ですが、使い分けを意識しましょう。' } },
+  { id:'g27', level:'B2', sentence:"The CEO's remarks were met with skepticism, ___ was hardly surprising given the company's track record.", choices:['which','that','it','this'], answerIndex:0,
+    explain:{ correct:'コンマの後に続き、前の文全体を先行詞とする非制限用法の関係代名詞には which を使います。',
+      wrong:'that は非制限用法には使えません。it や this は接続詞なしに新しい文を作ってしまうため文法的に誤りです。',
+      tip:'前の文全体を受けて「それは〜だ」と続けたいときは , which ... という形を使います。' } },
+  { id:'g28', level:'B2', sentence:'___ the complexity of the negotiations, both sides remained committed to reaching an agreement.', choices:['Given','Provided','Unless','Whereas'], answerIndex:0,
+    explain:{ correct:'Given は「〜を考慮すると」という意味の前置詞的表現で、後ろに名詞を続けられます。',
+      wrong:'Provided は条件、Unless は「〜しない限り」、Whereas は対比の接続詞で節が必要なため、この形には合いません。',
+      tip:'Given＋名詞は「〜を踏まえると」という意味で、フォーマルな文章の書き出しによく使われます。' } },
+  { id:'g29', level:'B2', sentence:'The proposal was, ___ all accounts, a resounding success.', choices:['by','on','in','from'], answerIndex:0,
+    explain:{ correct:'by all accounts は「誰もが言うところによると」という意味の決まり文句です。',
+      wrong:'on/in/from はこのイディオムの一部として使われません。',
+      tip:'by all accounts はニュースやレポートで客観的な評判・伝聞を紹介する際によく使われる定型表現です。' } },
+  { id:'g30', level:'B2', sentence:'The findings, significant ___ they may be, do not conclusively prove the hypothesis.', choices:['as','that','though','so'], answerIndex:0,
+    explain:{ correct:'「形容詞＋as＋主語＋動詞」は「〜ではあるが」という譲歩を表す倒置構文です。',
+      wrong:'that/though/so はこの倒置パターンの一部として機能しません。',
+      tip:'Tired as I was, I kept working. のように、「形容詞＋as＋主語＋動詞」は though と同じ意味を持つフォーマルな譲歩表現です。' } },
+
+  { id:'g31', level:'C1', sentence:'___ the economic downturn, the company managed to increase its profits.', choices:['Despite of','In spite','Notwithstanding','Because'], answerIndex:2,
+    explain:{ correct:'notwithstanding は「〜にもかかわらず」を意味するフォーマルな前置詞で、直後に名詞を続けます。',
+      wrong:'despite of は誤用、in spite は of が抜けており、because は理由を表すため逆接の文意に合いません。',
+      tip:'「〜にもかかわらず」を表す前置詞は despite／in spite of／notwithstanding の3つ。notwithstanding が最もフォーマルです。' } },
+  { id:'g32', level:'C1', sentence:'The board insisted that the report ___ revised before submission.', choices:['is','was','be','will be'], answerIndex:2,
+    explain:{ correct:'insist that ... が要求・提案の意味を持つ場合、動詞は原形（仮定法現在）を使います。ここでは be revised が正解です。',
+      wrong:'is/was/will be はいずれも直説法であり、要求・提案を表す仮定法現在の文脈には使えません。',
+      tip:'insist, suggest, recommend, demand などの要求・提案動詞に続く that節では、動詞は原形になります。' } },
+  { id:'g33', level:'C1', sentence:'___ had the merger been announced than the stock price surged.', choices:['No sooner','Sooner','As soon','Hardly'], answerIndex:0,
+    explain:{ correct:'No sooner ... than ... は「〜するとすぐに…した」という構文で、倒置（had＋主語＋過去分詞）が起こります。',
+      wrong:'Sooner や As soon は than と正しく呼応しません。Hardly は Hardly ... when/before の組み合わせが必要です。',
+      tip:'No sooner ... than ... と Hardly/Scarcely ... when ... はセットで暗記しておきましょう。' } },
+  { id:'g34', level:'C1', sentence:'She would rather her colleagues ___ informed before the announcement.', choices:['are','were','be','had been'], answerIndex:1,
+    explain:{ correct:'would rather＋主語＋過去形は「（他人に）〜してほしい」という現在・未来の希望を表す仮定法過去です。',
+      wrong:'are は直説法、be は原形（形が合わない）、had been は過去の願望になり文意に合いません。',
+      tip:'would rather＋主語＋過去形（他者への希望）と、would rather＋動詞原形（自分の希望）の違いに注意しましょう。' } },
+  { id:'g35', level:'C1', sentence:'Were the negotiations to collapse, both parties ___ significant losses.', choices:['would face','will face','faced','face'], answerIndex:0,
+    explain:{ correct:'Were ... to ... は if ... were to ... の倒置形で仮定法未来を表します。帰結節には would＋動詞の原形が対応します。',
+      wrong:'will face は直説法の未来形なので仮定にそぐいません。faced や face も帰結節の形として合いません。',
+      tip:'were ... to 不定詞は、起こる可能性が低い未来を仮定するときに使われるフォーマルな表現です。' } },
+  { id:'g36', level:'C1', sentence:'What the company needs most ___ a clear long-term strategy.', choices:['is','are','be','being'], answerIndex:0,
+    explain:{ correct:'What ... で始まる疑似分裂文が主語になる場合、動詞は補語（a clear long-term strategy=単数）に一致させ is が正解です。',
+      wrong:'are は補語が単数のため不一致、be や being は定形動詞として主動詞になれません。',
+      tip:'What S＋V is/was＋名詞 という擬似分裂文は、文の焦点を強調する便利な構文です。' } },
+  { id:'g37', level:'C1', sentence:'Under no circumstances ___ be shared with third parties.', choices:['should this information','this information should','should information this','this should information'], answerIndex:0,
+    explain:{ correct:'Under no circumstances のような強い否定の副詞句が文頭に出ると、助動詞＋主語＋動詞の倒置語順になります。',
+      wrong:'他の選択肢は語順が入れ替わっており、倒置のルールに反しています。',
+      tip:'Under no circumstances, In no way, On no account, At no time はすべて同じ強い否定倒置のグループです。' } },
+  { id:'g38', level:'C1', sentence:'In no way ___ responsible for the errors in the final report.', choices:['is the department','the department is','is department the','the is department'], answerIndex:0,
+    explain:{ correct:'In no way という強い否定の副詞句が文頭に出ると、be動詞＋主語の倒置語順になります。',
+      wrong:'他の選択肢は語順が崩れています。',
+      tip:'In no way, By no means, Under no circumstances はいずれも「決して〜ない」という強い否定を表し、文頭に置くと倒置を伴います。' } },
+  { id:'g39', level:'C1', sentence:'Not only is the new policy unpopular with staff, ___ it is also proving difficult to implement.', choices:['but','and','so','or'], answerIndex:0,
+    explain:{ correct:'Not only ... but (also) ... は相関接続詞で、後半には but が必要です。',
+      wrong:'and や so, or ではNot onlyとの相関関係が成立しません。',
+      tip:'not only...but also, both...and, either...or, neither...nor はまとめて「相関接続詞」として整理しておきましょう。' } },
+  { id:'g40', level:'C1', sentence:'She is said ___ instrumental in securing the deal.', choices:['to have been','to be been','having been','to being'], answerIndex:0,
+    explain:{ correct:'be said to have＋過去分詞は「〜だったと言われている」という過去の出来事についての伝聞を表す構文です。',
+      wrong:'to be been や having been, to being はいずれも不定詞の形として文法的に誤りです。',
+      tip:'is believed/thought/said/reported to have＋過去分詞は「伝聞の受動態」構文としてセットで覚えましょう。' } },
+  { id:'g41', level:'C1', sentence:"You needn't ___ so early — the meeting was postponed.", choices:['have arrived','arrive','arrived','has arrived'], answerIndex:0,
+    explain:{ correct:"needn't have＋過去分詞は「〜する必要はなかったのに（実際にはした）」という過去の不要な行動を表します。",
+      wrong:'arrive は原形で時制が合わず、arrived だけでは助動詞が欠け、has arrived は主語と一致しません。',
+      tip:"needn't have＋過去分詞（不要だったのにした）と didn't need to＋原形（必要なかったのでしなかった）の違いを整理しておきましょう。" } },
+  { id:'g42', level:'C1', sentence:'Rarely, if ever, ___ such a controversial decision been made without board approval.', choices:['has','have','had','was'], answerIndex:0,
+    explain:{ correct:'Rarely, if ever が文頭に出ると倒置が起こります。主語は単数なので has been made に対応する has が正解です。',
+      wrong:'have/had/was は主語の数や時制と一致しません。',
+      tip:'Rarely, if ever は「めったに、あるとしても」という意味を強めた表現で、Rarelyと同じ倒置ルールが適用されます。' } },
+  { id:'g43', level:'C1', sentence:'The board\'s decision, ___ controversial, was ultimately upheld by the shareholders.', choices:['while','despite','however','although being'], answerIndex:0,
+    explain:{ correct:'while＋形容詞（主語＋be動詞の省略）で「〜ではあるが」という譲歩を簡潔に表せます。',
+      wrong:'despite は通常名詞を伴い、however は接続副詞で節をつなげず、although being は being が不要で冗長です。',
+      tip:'while/though＋形容詞は、簡潔で洗練された譲歩表現としてフォーマルな文章でよく使われます。' } },
+  { id:'g44', level:'C1', sentence:'It is not that the plan lacks merit; ___ the timing is simply wrong.', choices:['rather','however','therefore','moreover'], answerIndex:0,
+    explain:{ correct:'It is not that A; rather, B は「Aというわけではなく、むしろB」という訂正・言い換えを表す構文です。',
+      wrong:'however, therefore, moreover はいずれも意味的につながりが異なります。',
+      tip:'It is not that ..., rather ... は、誤解を訂正しながら真意を伝えたいときに便利な表現です。' } },
+  { id:'g45', level:'C1', sentence:'Whatever the outcome of the vote, the board ___ to honoring the decision.', choices:['is committed','has commited','are committed','commits'], answerIndex:0,
+    explain:{ correct:'be committed to＋動名詞は「〜することに決意している」という定型表現で、単数主語 the board に合わせて is committed が正解です。',
+      wrong:'has commited はスペルミス、are committed は主語と不一致、commits だけでは to以下との意味的つながりが弱くなります。',
+      tip:'be committed to は前置詞のtoなので後ろは動名詞、というルールとスペル（committed=t2つ）を同時に確認しましょう。' } },
+  { id:'g46', level:'C1', sentence:'So ___ was the demand that the company had to double its production capacity.', choices:['great','greatly','greater','greatest'], answerIndex:0,
+    explain:{ correct:'So＋形容詞＋be動詞＋主語＋that ... の倒置構文では、soの後には形容詞の原級が入ります。',
+      wrong:'greatly は副詞で名詞を修飾する形容詞の位置には使えません。greater/greatest はthatと組み合わさるこの構文には合いません。',
+      tip:'So＋形容詞（原級）＋that ... という結果構文の形をしっかり押さえておきましょう。' } },
+  { id:'g47', level:'C1', sentence:'Had the merger proceeded as planned, the combined entity ___ the largest in the industry.', choices:['would be','would have been','will be','is'], answerIndex:1,
+    explain:{ correct:'Had the merger proceeded ...（仮定法過去完了の倒置）に対応する帰結節は would have＋過去分詞になります。',
+      wrong:'would be は現在の結果用で時制がずれ、will be や is は直説法で仮定のニュアンスが出ません。',
+      tip:'条件節が Had＋過去分詞のときは、帰結節も原則 would have＋過去分詞で時制を揃えます。' } },
+  { id:'g48', level:'C1', sentence:"The witness's account, corroborated ___ several independent sources, was accepted as reliable.", choices:['by','from','with','of'], answerIndex:0,
+    explain:{ correct:'corroborate の受動態は corroborated by＋情報源 の形を取ります。',
+      wrong:'from/with/of はcorroborateのコロケーションとして一般的ではありません。',
+      tip:'動詞ごとに決まった前置詞があるので、corroborated by, associated with のようにセットで覚えるのが効果的です。' } },
+  { id:'g49', level:'C1', sentence:'Few would deny that the reforms, ___ imperfect, represent a step in the right direction.', choices:['though','despite','but','so'], answerIndex:0,
+    explain:{ correct:'though＋形容詞（主語＋be動詞の省略）で「〜ではあるが」という譲歩を簡潔に表します。',
+      wrong:'despite は通常名詞を続けます。but は等位接続詞でこの位置には合わず、so は結果を表すため文意が変わります。',
+      tip:'though/although＋形容詞という省略形は、whileと同じ働きをする簡潔な譲歩表現です。' } },
+  { id:'g50', level:'C1', sentence:'The extent ___ the new policy will affect small businesses remains unclear.', choices:['to which','in which','which','that'], answerIndex:0,
+    explain:{ correct:'the extent to which ... は「〜する程度」という意味の定型表現で、前置詞toが必要です。',
+      wrong:'in which や which単独, thatではこのコロケーションとして成立しません。',
+      tip:'the extent to which, the degree to which はアカデミックライティングで頻出の表現です。' } },
+  { id:'g51', level:'C1', sentence:'___ what many economists had predicted, the recession proved to be short-lived.', choices:['As','Like','Unlike','So'], answerIndex:2,
+    explain:{ correct:'Unlike what ... は「〜が予測したこととは異なり」という対比を表し、予測が外れたという文脈に合います。',
+      wrong:'As は意味が「予測通り」になり逆、Like は類似を表すため意味が逆、So はこの位置では機能しません。',
+      tip:'As predicted（予測通り）と Unlike what was predicted（予測に反して）は正反対の意味なので注意しましょう。' } },
+  { id:'g52', level:'C1', sentence:'The negotiations dragged on for months, ___ neither side willing to compromise.', choices:['with','by','for','as'], answerIndex:0,
+    explain:{ correct:'with＋名詞＋形容詞は「〜が…な状態で」という付帯状況を表す構文です。',
+      wrong:'by/for/asはこの付帯状況構文の形として使われません。',
+      tip:'with＋O＋形容詞/分詞/to不定詞 の付帯状況構文は、2つの出来事を1文で簡潔につなげる際に便利です。' } },
+  { id:'g53', level:'C1', sentence:'___ the report is accurate, several key figures appear to be outdated.', choices:['Assuming','Provided','Granted','Unless'], answerIndex:2,
+    explain:{ correct:'Granted (that) は「〜だと認めるとしても」という譲歩を表し、正確だと認めつつも一部データは古いという文脈に合います。',
+      wrong:'Assuming は単純な仮定、Provided は条件、Unless は「〜しない限り」で、譲歩のニュアンスを表せません。',
+      tip:'Granted (that) ..., however/still ... という形で、一理あると認めつつ反論する際によく使われます。' } },
+  { id:'g54', level:'C1', sentence:'The findings lend ___ to the theory that remote work increases productivity.', choices:['credence','credit','credibility','creditable'], answerIndex:0,
+    explain:{ correct:'lend credence to ~ は「〜に信憑性を与える」という決まったコロケーションです。',
+      wrong:'credit は意味が異なり、credibility は文法上可能でも定型ではなく、creditable は形容詞で名詞の位置に使えません。',
+      tip:'lend credence to, lend support to, lend weight to はいずれも頻出コロケーションです。' } },
+  { id:'g55', level:'C1', sentence:"The committee's findings were, on the whole, ___ with earlier research.", choices:['consistent','consistently','consistence','consist'], answerIndex:0,
+    explain:{ correct:'be consistent with ~ は「〜と一致している」という意味の形容詞句で、be動詞の後に形容詞が続きます。',
+      wrong:'consistently は副詞で補語の位置には使えず、consistence は一般的でなく、consist は動詞の原形で合いません。',
+      tip:'consistent with, in line with, in keeping with はいずれも「〜と一致している」という意味の表現です。' } },
+  { id:'g56', level:'C1', sentence:'The evidence, taken ___, strongly suggests a link between the two events.', choices:['together','along','jointly','combined'], answerIndex:0,
+    explain:{ correct:'taken together は「総合的に見ると」という意味の定型表現です。',
+      wrong:'taken along, taken jointly, taken combined はこの意味の定型表現としては使われません。',
+      tip:'taken together, taken as a whole, on balance はいずれも「全体を通して考えると」という意味です。' } },
+  { id:'g57', level:'C1', sentence:'There is no denying ___ the project has fallen behind schedule.', choices:['that','of','for','to'], answerIndex:0,
+    explain:{ correct:'There is no denying that ... は「〜ということは否定できない」という定型表現です。',
+      wrong:'of/for/to はこの構文の形として使われません。',
+      tip:'There is no denying that / There is no doubt that は強い確信を表す書き言葉的な表現です。' } },
+  { id:'g58', level:'C1', sentence:'The report falls short ___ providing a clear set of recommendations.', choices:['of','from','in','at'], answerIndex:0,
+    explain:{ correct:'fall short of ~ は「〜に及ばない、期待に達しない」という意味の定型表現で、前置詞は of を使います。',
+      wrong:'from/in/at はこのコロケーションでは使われません。',
+      tip:'fall short of expectations / fall short of the target のように、fall short of は「不足」を表す頻出表現です。' } },
+  { id:'g59', level:'C1', sentence:'___ the setbacks, the team pressed ahead with the launch as scheduled.', choices:['Notwithstanding','Nonetheless','However','Nevertheless'], answerIndex:0,
+    explain:{ correct:'notwithstanding は前置詞として使え、直後に名詞（the setbacks）を続けられます。',
+      wrong:'nonetheless, however, nevertheless はいずれも副詞であり、直接名詞を目的語のように取ることはできません。',
+      tip:'notwithstanding は名詞を直接取れる前置詞、nonetheless/however/nevertheless は文をつなぐ副詞、と区別しましょう。' } },
+  { id:'g60', level:'C1', sentence:'The proposal was rejected not so much because of its cost ___ because of its complexity.', choices:['as','but','than','so'], answerIndex:0,
+    explain:{ correct:'not so much A as B は「AというよりむしろB」という対比を表す構文で、as がBを導きます。',
+      wrong:'but/than/so はこの構文の一部として使われません。',
+      tip:'not so much A as B ≒ B rather than A という意味で、対比を洗練された形で表現できます。' } },
+
+  { id:'g61', level:'C2', sentence:'___ as it may, the fundamental issue remains unresolved.', choices:['Be that','Be it','Being that','Was that'], answerIndex:0,
+    explain:{ correct:'Be that as it may は「それはそうだとしても」という意味の慣用表現で、決まった形で使われます。',
+      wrong:'Be it, Being that, Was that はこのイディオムの正しい形ではありません。',
+      tip:'Be that as it may は仮定法現在の名残を残す古風な表現で、フォーマルなスピーチや論説でよく使われます。' } },
+  { id:'g62', level:'C2', sentence:'___ may, the team is determined to meet the launch date.', choices:['Come what','Comes what','Coming what','Came what'], answerIndex:0,
+    explain:{ correct:'Come what may は「何が起ころうとも」という意味の慣用表現で、仮定法現在に由来する決まった形です。',
+      wrong:'三人称単数・分詞・過去形の形はこのイディオムでは使われません。',
+      tip:'Come what may, so be it, suffice it to say は現代英語にわずかに残る仮定法現在の慣用表現です。' } },
+  { id:'g63', level:'C2', sentence:'___ one to examine the data closely, several inconsistencies would become apparent.', choices:['Were','Should','Had','If'], answerIndex:0,
+    explain:{ correct:'Were one to ... は If one were to ...（もし〜だとしたら）の倒置形で、仮定法未来を表すフォーマルな表現です。',
+      wrong:'Should one to は文法的に不自然、Had one to も形として合わず、If one to は動詞形が崩れています。',
+      tip:'Were one to, Were she to のように「Were＋主語＋to不定詞」は非常にフォーマルな仮定法未来の倒置形です。' } },
+  { id:'g64', level:'C2', sentence:'Insofar ___ the evidence permits, the tribunal will render a judgment by the end of the month.', choices:['as','that','than','so'], answerIndex:0,
+    explain:{ correct:'insofar as ~ は「〜する限りにおいて」という意味の、ややフォーマルな接続詞句です。',
+      wrong:'that/than/so はこのイディオムの一部としては使われません。',
+      tip:'insofar as, to the extent that はどちらも「〜する範囲において」という限定を表す表現です。' } },
+  { id:'g65', level:'C2', sentence:'By virtue ___ her extensive experience, she was appointed to lead the negotiations.', choices:['of','from','for','in'], answerIndex:0,
+    explain:{ correct:'by virtue of ~ は「〜の力によって」という意味のフォーマルな前置詞句で、必ず of を伴います。',
+      wrong:'from/for/in はこのイディオムでは使われません。',
+      tip:'by virtue of, on account of, in light of はいずれも「〜の理由・根拠で」を表すフォーマルな表現群です。' } },
+  { id:'g66', level:'C2', sentence:'The clause shall remain in effect ___ terminated by mutual written agreement.', choices:['unless','until','if','once'], answerIndex:0,
+    explain:{ correct:'unless terminated は「解除されない限り」という意味で、契約書で効力の継続条件を示す典型的な表現です。',
+      wrong:'until は「終了されるまで」という時間的限定になり厳密には意味がずれ、ifは条件が弱く、onceは「一度〜したら」で意味が変わります。',
+      tip:'契約書英語では unless terminated, unless otherwise agreed のように、unless＋過去分詞の形が非常によく使われます。' } },
+  { id:'g67', level:'C2', sentence:"The witness's testimony, ___ credible on its face, was later found to be riddled with inconsistencies.", choices:['while seemingly','while seeming','while seem','while it seeming'], answerIndex:0,
+    explain:{ correct:'while seemingly credible は「一見信憑性があるように見えたが」という意味で、while＋副詞＋形容詞の簡潔な譲歩表現です。',
+      wrong:'while seeming/while seem/while it seeming はいずれも文法的な形として不自然です。',
+      tip:'while/though＋副詞＋形容詞という省略譲歩構文は、フォーマルな文章で簡潔に対比を示すために使われます。' } },
+  { id:'g68', level:'C2', sentence:'So thoroughly ___ the market that new entrants find it almost impossible to gain a foothold.', choices:['dominate incumbents','do incumbents dominate','incumbents dominate','dominated incumbents'], answerIndex:1,
+    explain:{ correct:'So＋副詞が文頭に出ると倒置が起こり、一般動詞の場合は do/does/did＋主語＋動詞の原形の語順になります。',
+      wrong:'他の選択肢は倒置の語順になっていません。',
+      tip:'So＋副詞/形容詞 の倒置では、一般動詞の文なら do/does/didを補う必要がある点に注意しましょう。' } },
+  { id:'g69', level:'C2', sentence:'Only by working collaboratively ___ overcome challenges of this magnitude.', choices:['can organizations','organizations can','can organizations to','organizations could to'], answerIndex:0,
+    explain:{ correct:'Only by ... のような限定を表す副詞句が文頭に出ると、主節は倒置語順（助動詞＋主語＋動詞）になります。',
+      wrong:'他の選択肢は語順が崩れているか、不要な to が入っています。',
+      tip:'Only by, Only through, Only in this way も Only after と同じ倒置グループに属します。' } },
+  { id:'g70', level:'C2', sentence:'It was not until decades later ___ the true scale of the cover-up came to light.', choices:['that','when','which','then'], answerIndex:0,
+    explain:{ correct:'It is/was not until X that Y は「Xして初めてYした」という意味を強調する分裂文で、that が続きます。',
+      wrong:'when/which/thenはこの強調構文の形としては使われません。',
+      tip:'It was not until ... that ... は Not until ... did ... の倒置構文と同じ意味を、より書き言葉的に表現する形です。' } },
+  { id:'g71', level:'C2', sentence:'___ carefully the proposal is worded, some ambiguity is likely to remain.', choices:['However','Whatever','No matter','Nonetheless'], answerIndex:0,
+    explain:{ correct:'However＋形容詞/副詞＋主語＋動詞は「どんなに〜でも」という譲歩を表し、no matter how と同じ意味です。',
+      wrong:'Whatever は対象が異なり、No matter は No matter how の形でなければ機能せず、Nonethelessは節を導けません。',
+      tip:'However＋形容詞/副詞＋S＋V ＝ No matter how＋形容詞/副詞＋S＋V という書き換えパターンを覚えておきましょう。' } },
+  { id:'g72', level:'C2', sentence:'The findings are, in ___ respects, consistent with previous studies, though notable discrepancies remain.', choices:['many','much','a lot','plenty'], answerIndex:0,
+    explain:{ correct:'in many respects（多くの点で）は respect が可算名詞として使われる決まった言い方で、many が正解です。',
+      wrong:'much は不可算名詞用、a lot 単体では名詞を修飾できず、plenty も通常 plenty of の形で使います。',
+      tip:'in many respects, in some respects, in this respect のコロケーションを覚えておきましょう。' } },
+  { id:'g73', level:'C2', sentence:"The board's reluctance to act, understandable ___ it may be, has nonetheless drawn criticism.", choices:['as','though','that','so'], answerIndex:0,
+    explain:{ correct:'「形容詞＋as＋主語＋動詞」は「〜ではあるが」という譲歩を表す倒置構文です。',
+      wrong:'though 単体ではこの倒置語順を作れません。that/so はこの構文には使われません。',
+      tip:'Though it may be understandable / Understandable as it may be という2つの形を比較しておきましょう。' } },
+  { id:'g74', level:'C2', sentence:'___ its flaws, the report offers a valuable starting point for further research.', choices:['For all','Despite of','In spite','With all of'], answerIndex:0,
+    explain:{ correct:'for all ~ は「〜にもかかわらず」という意味の上級者向けイディオムです（= despite）。',
+      wrong:'despite of は誤用、in spite は of が抜けており、with all of はこの意味では使われません。',
+      tip:'for all his faults, for all its shortcomings のように、for all は despite とほぼ同義で使われます。' } },
+  { id:'g75', level:'C2', sentence:'The full implications of the ruling have ___ to be fully understood.', choices:['yet','already','ever','still'], answerIndex:0,
+    explain:{ correct:'have yet to＋動詞の原形（受動態ならbe＋過去分詞）は「まだ〜していない」という意味の定型表現です。',
+      wrong:'already/ever/still はこの構文には使われません（"have still to" は標準的ではありません）。',
+      tip:'have yet to do は、not を使わない婉曲的な否定表現として、フォーマルな文章で好まれます。' } },
+  { id:'g76', level:'C2', sentence:'___ it to say, the negotiations did not go as smoothly as anticipated.', choices:['Suffice','Sufficed','Sufficing','Suffices'], answerIndex:0,
+    explain:{ correct:'Suffice it to say は「〜と言えば十分だろう」という意味の慣用表現で、仮定法現在の名残を残す決まった形です。',
+      wrong:'Sufficed, Sufficing, Suffices はこのイディオムの正しい形ではありません。',
+      tip:'Suffice it to say は Be that as it may や Come what may と同じグループの慣用表現です。' } },
+  { id:'g77', level:'C2', sentence:'The revised guidelines, ___ they are, still leave several key questions unanswered.', choices:['welcome as','welcome though','as welcome','so welcome'], answerIndex:0,
+    explain:{ correct:'「形容詞＋as＋主語＋動詞」の譲歩構文で、welcome as they are は「歓迎すべきものではあるが」という意味になります。',
+      wrong:'welcome though は語順が逆、as welcome や so welcome はこの構文の形として不自然です。',
+      tip:'Difficult as it may seem, Costly as it is など、様々な形容詞で応用できるようにしておきましょう。' } },
+  { id:'g78', level:'C2', sentence:"The company's success can be attributed, ___ part, to its early investment in technology.", choices:['in','for','by','at'], answerIndex:0,
+    explain:{ correct:'in part は「部分的には」という意味の定型的な副詞句です。',
+      wrong:'for/by/at はこのイディオムでは使われません。',
+      tip:'in part, in large part, in no small part はいずれも「程度」を表す表現として要因の説明でよく使われます。' } },
+  { id:'g79', level:'C2', sentence:"The auditor's report raises questions ___ the company's financial disclosures are, in fact, complete.", choices:['as to whether','as to that','whether that','that whether'], answerIndex:0,
+    explain:{ correct:'raise questions as to whether ... は「〜かどうかという疑問を投げかける」という意味の定型表現です。',
+      wrong:'as to that や whether that, that whether はこの構文の正しい形ではありません。',
+      tip:'as to whether, as to how, as to why のように、as to は疑問詞節を導く前置詞として使われます。' } },
+  { id:'g80', level:'C2', sentence:"The regulator's decision is, to all ___ and purposes, final.", choices:['intents','intent','intend','intended'], answerIndex:0,
+    explain:{ correct:'to all intents and purposes は「事実上、実質的に」という意味の慣用表現で、intents（複数形）が正しい形です。',
+      wrong:'intent（単数）, intend（動詞）, intended（過去分詞）はこの定型句の正しい形ではありません。',
+      tip:'to all intents and purposes ≒ effectively / in effect という意味の決まり文句としてそのまま覚えましょう。' } },
+  { id:'g81', level:'C2', sentence:'The provisions of the agreement ___, both parties retained the right to renegotiate terms.', choices:['notwithstanding','notwithstanding of','despite','although'], answerIndex:0,
+    explain:{ correct:'notwithstanding は名詞の後に置く後置用法もでき、the provisions ... notwithstanding で「その条項にもかかわらず」という意味になります。',
+      wrong:'notwithstanding of という形は存在せず、despite は後置では使えず、although は接続詞で名詞の後には置けません。',
+      tip:'notwithstanding は数少ない「名詞の後に置ける前置詞」の一つです。' } },
+  { id:'g82', level:'C2', sentence:'Little store should be set ___ rumors that have not been substantiated.', choices:['by','in','on','to'], answerIndex:0,
+    explain:{ correct:'set store by ~ は「〜を信頼する、重きを置く」という意味の、フォーマルな文章で使われるイディオムです。',
+      wrong:'in/on/to はこのイディオムでは使われません。',
+      tip:'set store by, set great store by は set high value on と近い意味を持つ表現です。' } },
+  { id:'g83', level:'C2', sentence:"The tribunal's ruling, controversial ___ it may have been, set an important precedent.", choices:['though','as','so','but'], answerIndex:0,
+    explain:{ correct:'「形容詞＋though＋主語＋動詞」も「〜ではあるが」という譲歩を表す構文で、as を使うパターンと同じ働きをします。',
+      wrong:'as 単体ではこの位置で同じようには機能せず、so/but はこの構文の形として不適切です。',
+      tip:'「形容詞＋as＋S＋V」と「形容詞＋though＋S＋V」はほぼ同じ意味で使い分けられる譲歩構文のバリエーションです。' } },
+  { id:'g84', level:'C2', sentence:'Not since the founding of the company ___ such rapid growth been recorded.', choices:['has','have','had','was'], answerIndex:0,
+    explain:{ correct:'Not since ... という限定表現が文頭に出ると倒置が起こります。現在までの継続を表すため現在完了 has been recorded に対応する has が正解です。',
+      wrong:'have は主語が単数のため不一致、had は過去完了で文脈に合わず、was では継続のニュアンスが出ません。',
+      tip:'Not since ...（現在完了の倒置）は「〜以来一度も…ない」という意味を強調する構文です。' } },
+  { id:'g85', level:'C2', sentence:'The proposal, ambiguous ___ it may have been intended, only added to the confusion.', choices:['as','whether','if','though as'], answerIndex:0,
+    explain:{ correct:'「形容詞＋as＋主語＋動詞」の譲歩構文で、ambiguous as it may have been intended は「意図的に曖昧にされていたのだとしても」という意味になります。',
+      wrong:'whether/if はこの構文の一部としては使われません。though as は形として重複しており誤りです。',
+      tip:'この構文は過去形・完了形と組み合わさることもあるので、動詞の形にとらわれず as の直前の形容詞に注目しましょう。' } },
+  { id:'g86', level:'C2', sentence:'The minister\'s statement was, in the final analysis, little more than a political maneuver.', choices:['in the final analysis','at the final analysis','on the final analysis','by the final analysis'], answerIndex:0,
+    explain:{ correct:'in the final analysis は「突き詰めて考えると、結局のところ」という意味の定型表現です。',
+      wrong:'at/on/by ではこのイディオムは成立しません。',
+      tip:'in the final analysis, when all is said and done はどちらも議論を締めくくる際に使われるフォーマルな表現です。' } },
+  { id:'g87', level:'C2', sentence:'The evidence presented was, if ___, even more damning than the prosecution had suggested.', choices:['anything','something','nothing','everything'], answerIndex:0,
+    explain:{ correct:'if anything は「どちらかと言えば、むしろ」という意味の挿入句で、比較級を強める働きをします。',
+      wrong:'something/nothing/everything はこのイディオムの形としては使われません。',
+      tip:'if anything は控えめな強調表現として、比較級の直前に挿入される形でよく使われます。' } },
+  { id:'g88', level:'C2', sentence:'The clause is, for want of a better ___, somewhat vague.', choices:['term','terms','terming','termed'], answerIndex:0,
+    explain:{ correct:'for want of a better term は「他に適切な言い方がないので」という意味の慣用表現で、term（単数）が正しい形です。',
+      wrong:'terms（複数）, terming, termed はこの定型句の正しい形ではありません。',
+      tip:'for want of a better word/term は、適切な語彙が見つからないときに使う便利なフォーマル表現です。' } },
+  { id:'g89', level:'C2', sentence:'The report, exhaustive though it ___, still omits several crucial data points.', choices:['is','be','was being','were being'], answerIndex:0,
+    explain:{ correct:'「形容詞＋though＋主語＋動詞」の譲歩構文で、現在の状態を述べる場合は直説法の現在形 is を使います。',
+      wrong:'be は原形でこの位置には使えず、was being/were being は不要に複雑で文意に合いません。',
+      tip:'この構文の動詞は文脈の時制（現在・過去）に合わせて選ぶ、という点に注意しましょう。' } },
+  { id:'g90', level:'C2', sentence:'So entrenched ___ the practice that reform advocates faced fierce institutional resistance.', choices:['was','is','had been','were'], answerIndex:0,
+    explain:{ correct:'So＋形容詞が文頭に出ると倒置が起こり、be動詞＋主語の語順になります。主語 the practice は単数、時制は過去なので was が正解です。',
+      wrong:'is は時制が現在で合わず、had been は不要に複雑、were は主語が単数のため不一致です。',
+      tip:'So＋形容詞＋be動詞＋主語＋that ... の倒置構文は結果を強調するフォーマルな表現として、このシリーズ全体で繰り返し確認しておきましょう。' } },
+];
+
+/* ------------------------------------------------------------------ */
+/* Data: Reading (6 passages: 2 x B2 / C1 / C2)                         */
+/* ------------------------------------------------------------------ */
+
+var READING = [
+  {
+    id:'r1', level:'B2', title:'Article: Supply Chain Diversification',
+    text: 'In response to recent disruptions, many multinational corporations have begun diversifying their supply chains rather than relying on a single manufacturing hub. While this strategy can increase costs in the short term, it reduces exposure to regional shocks such as natural disasters, trade disputes, or political instability. Critics argue that diversification alone is insufficient without corresponding investment in logistics infrastructure and supplier relationship management. Nonetheless, most industry analysts agree that the shift away from single-source dependency is likely to continue for the foreseeable future.',
+    questions: [
+      { q:'Why are corporations diversifying their supply chains?', choices:['To reduce costs immediately','To reduce exposure to regional shocks','To increase reliance on a single hub','To comply with new regulations'], answerIndex:1,
+        explain:{ correct:"本文に 'it reduces exposure to regional shocks' と明記されています。", wrong:"コスト削減は逆に短期的には増えると書かれています。単一拠点への依存強化や規制遵守についての記述はありません。", tip:"'While A, B'（Aだが、B）という譲歩構文が出たら、筆者が強調したいのはBの側であることが多い点に注目しましょう。" } },
+      { q:'What do critics say diversification alone lacks?', choices:['Government support','Investment in logistics and supplier management','Consumer demand','Enough manufacturing hubs'], answerIndex:1,
+        explain:{ correct:"'diversification alone is insufficient without corresponding investment in logistics infrastructure and supplier relationship management' とあります。", wrong:"政府支援や消費者需要、拠点数についての言及は本文にありません。", tip:"'insufficient without X' は「Xがなければ不十分」という意味なので、Xの部分（=不足しているもの）を正確に読み取りましょう。" } },
+      { q:'According to the passage, what is the likely future trend?', choices:['Return to single-source dependency','Continued diversification','Complete automation','Reduced global trade'], answerIndex:1,
+        explain:{ correct:"'the shift away from single-source dependency is likely to continue' とあります。", wrong:"単一拠点への回帰は本文と逆で、自動化や貿易縮小への言及はありません。", tip:"結論を問う設問では、多くの場合、最終文に答えの根拠があります。" } },
+    ],
+  },
+  {
+    id:'r2', level:'C1', title:'Article: The Limits of Rational Decision-Making',
+    text: 'Traditional economic models assume that individuals make decisions by rationally weighing costs and benefits. However, behavioral economics has demonstrated that cognitive biases frequently distort this process. Anchoring, for instance, causes people to rely too heavily on the first piece of information encountered, while loss aversion leads individuals to weigh potential losses more heavily than equivalent gains. These findings have significant implications for policy design, as interventions that account for predictable irrationality often prove more effective than those grounded purely in classical rational-choice theory.',
+    questions: [
+      { q:'According to the passage, what does behavioral economics challenge?', choices:['The existence of cognitive biases','The assumption of purely rational decision-making','The value of policy design','The concept of loss aversion'], answerIndex:1,
+        explain:{ correct:"'Traditional economic models assume that individuals make decisions by rationally weighing costs and benefits' という前提に対して、行動経済学が異を唱えている構図です。", wrong:"認知バイアスの存在自体や政策設計の価値は挑戦されている対象ではありません。", tip:"'However, X has demonstrated that ...' のように However で前段の前提を覆す展開は、アカデミックな文章の典型パターンです。" } },
+      { q:'What is "anchoring" as described in the passage?', choices:['Overvaluing potential losses','Relying too heavily on the first information received','Ignoring all available information','A type of policy intervention'], answerIndex:1,
+        explain:{ correct:"'Anchoring ... causes people to rely too heavily on the first piece of information encountered' とあります。", wrong:"'Overvaluing potential losses' は次の文の loss aversion の定義であり混同しやすい点です。", tip:"2つの認知バイアスが並べて説明される場合、どちらの定義がどちらに対応するか丁寧に線を引きながら読みましょう。" } },
+      { q:'What does the passage suggest about effective policy interventions?', choices:['They should ignore cognitive biases','They often work better when they account for predictable irrationality','They should rely purely on classical theory','They are less effective than rational-choice models'], answerIndex:1,
+        explain:{ correct:"'interventions that account for predictable irrationality often prove more effective than those grounded purely in classical rational-choice theory' とあります。", wrong:"他の選択肢はいずれも本文の主張と正反対です。", tip:"'X than Y' の比較構文では、どちらが優れていると述べられているかを必ず確認しましょう。" } },
+    ],
+  },
+  {
+    id:'r3', level:'C2', title:'Essay: Accountability in Complex Organizations',
+    text: 'As organizations grow in scale and complexity, the diffusion of responsibility across multiple layers of decision-making can render conventional notions of accountability increasingly untenable. When outcomes emerge from the interaction of numerous actors operating within loosely coupled systems, attributing culpability to any single individual or unit becomes an exercise fraught with ambiguity. Some scholars have argued that this diffusion is not merely an incidental byproduct of organizational growth but is, in certain contexts, actively cultivated as a mechanism of institutional self-protection. Whether this constitutes a genuine structural inevitability or a convenient rationalization for the erosion of oversight remains a matter of considerable scholarly contention.',
+    questions: [
+      { q:'What does the passage suggest about accountability in large organizations?', choices:['It becomes easier to assign to individuals','It can become increasingly difficult to attribute due to diffusion of responsibility','It is always clearly defined by policy','It has no relation to organizational size'], answerIndex:1,
+        explain:{ correct:"'the diffusion of responsibility ... can render conventional notions of accountability increasingly untenable' とあります。", wrong:"'easier to assign' は本文と正反対です。他の選択肢も本文の主張と矛盾します。", tip:"主語（the diffusion of responsibility）と、それがもたらす結果（render ... untenable）の関係を骨格として捉えましょう。" } },
+      { q:'According to some scholars mentioned in the passage, why might diffusion of responsibility occur?', choices:['Purely by accident with no organizational cause','As a deliberate mechanism of institutional self-protection','Because of insufficient staffing','Due to a lack of scholarly interest'], answerIndex:1,
+        explain:{ correct:"'actively cultivated as a mechanism of institutional self-protection' とあります。", wrong:"'Purely by accident' は 'not merely an incidental byproduct' と矛盾します。人員不足や学術的関心の欠如についての言及はありません。", tip:"'not merely A but B' の構文では、but の後（B）が筆者の伝えたいポイントです。" } },
+      { q:'The word "untenable" most nearly means:', choices:['easily defended','unable to be maintained or justified','highly effective','legally required'], answerIndex:1,
+        explain:{ correct:'untenable は「維持・正当化できない」という意味です。', wrong:"'easily defended' は反対の意味です。他の選択肢も語義とは異なります。", tip:'tenable（弁護・維持可能な）に否定の接頭辞 un- がついた形だと分解すると意味を推測しやすくなります。' } },
+    ],
+  },
+  {
+    id:'r4', level:'B2', title:'Article: The Rise of Subscription-Based Business Models',
+    text: 'Subscription-based pricing has expanded far beyond media and software into industries such as automotive services, fashion, and even food delivery. Companies favor this model because it provides predictable, recurring revenue and encourages long-term customer relationships. However, some analysts warn that subscription fatigue is setting in, as consumers grow wary of accumulating multiple recurring charges. Businesses that fail to demonstrate ongoing value risk losing subscribers to cancellation, a trend commonly referred to as churn.',
+    questions: [
+      { q:'Why do companies favor subscription-based pricing?', choices:['It requires less marketing','It provides predictable, recurring revenue','It eliminates the need for customer service','It reduces product quality'], answerIndex:1,
+        explain:{ correct:"'it provides predictable, recurring revenue and encourages long-term customer relationships' と明記されています。", wrong:"他の選択肢に相当する記述は本文にありません。", tip:"because の後には理由が続くので、because節の直後を探せば設問の根拠が見つかることが多いです。" } },
+      { q:'What is "subscription fatigue"?', choices:['Excitement about new subscription services','Consumers growing wary of multiple recurring charges','A technical error in billing systems','A marketing strategy to attract subscribers'], answerIndex:1,
+        explain:{ correct:"'consumers grow wary of accumulating multiple recurring charges' と説明されています。", wrong:"他の選択肢は本文の内容と矛盾するか無関係です。", tip:"fatigue は本来「疲労」の意味ですが、ここでは比喩的に「うんざり感」を表しています。" } },
+      { q:'What is "churn" as used in the passage?', choices:['An increase in subscribers','The cancellation of subscriptions','A pricing strategy','A type of marketing campaign'], answerIndex:1,
+        explain:{ correct:"直前に 'losing subscribers to cancellation' とあり、churnは解約を意味するとわかります。", wrong:"他の選択肢はchurnの定義として本文に記載がありません。", tip:"未知の専門用語が出てきたら、その直前・直後の言い換え表現を探すのが読解のコツです。" } },
+    ],
+  },
+  {
+    id:'r5', level:'C1', title:'Article: The Psychology of Sunk Costs',
+    text: 'The sunk cost fallacy describes the tendency to continue investing in a decision based on the cumulative resources already spent, rather than on a rational assessment of future costs and benefits. This bias can be observed in contexts ranging from personal finance to large-scale corporate projects, where executives persist with failing initiatives simply because significant capital has already been committed. Behavioral economists argue that overcoming this bias requires deliberately evaluating decisions as if starting from scratch, disregarding any resources that cannot be recovered.',
+    questions: [
+      { q:'What is the sunk cost fallacy?', choices:['Investing based on future cost-benefit analysis','Continuing to invest based on resources already spent','Avoiding all financial risk','A strategy for maximizing profit'], answerIndex:1,
+        explain:{ correct:"'the tendency to continue investing ... based on the cumulative resources already spent, rather than on a rational assessment of future costs and benefits' と定義されています。", wrong:"'future cost-benefit analysis'に基づく判断は、本文ではむしろ望ましい行動として対比されています。", tip:"'rather than' の前後は対比構造なので、どちらが批判されている行動かを正確に区別しましょう。" } },
+      { q:'According to the passage, where can this bias be observed?', choices:['Only in personal finance','Only in government policy','From personal finance to corporate projects','Only in academic research'], answerIndex:2,
+        explain:{ correct:"'in contexts ranging from personal finance to large-scale corporate projects' と明記されています。", wrong:"'only'を含む選択肢は、本文が示す範囲の広さと矛盾します。", tip:"'ranging from A to B' は「AからBまで幅広く」という意味で、'only'系の選択肢とは相容れません。" } },
+      { q:'How do behavioral economists suggest overcoming this bias?', choices:['By ignoring all future costs','By evaluating decisions as if starting from scratch','By always continuing with the original plan','By increasing initial investment'], answerIndex:1,
+        explain:{ correct:"'evaluating decisions as if starting from scratch, disregarding any resources that cannot be recovered' と明記されています。", wrong:"他の選択肢は本文の推奨内容と矛盾するか、記載がありません。", tip:"'as if starting from scratch'（ゼロから始めるかのように）という比喩表現の意味を正確に捉えましょう。" } },
+    ],
+  },
+  {
+    id:'r6', level:'C2', title:'Essay: The Paradox of Choice in Governance',
+    text: 'Contemporary governance structures are often predicated on the assumption that expanding the range of options available to decision-makers necessarily enhances outcomes. Yet an emerging body of scholarship suggests that beyond a certain threshold, an abundance of alternatives can induce a form of paralysis, wherein the cognitive burden of evaluation outweighs any marginal benefit derived from additional choice. This phenomenon, while extensively documented in consumer behavior, has received comparatively little attention within institutional decision-making contexts, where the stakes of inaction are frequently more consequential than in individual purchasing decisions.',
+    questions: [
+      { q:'What assumption does the passage say contemporary governance structures are based on?', choices:['That fewer options lead to better outcomes','That expanding available options necessarily enhances outcomes','That decision-makers should avoid all choices','That institutions function identically to individual consumers'], answerIndex:1,
+        explain:{ correct:"'predicated on the assumption that expanding the range of options ... necessarily enhances outcomes' と明記されています。", wrong:"'fewer options'は本文の前提と逆です。他の選択肢も根拠がありません。", tip:"'predicated on the assumption that ...' は「〜という前提に基づいている」という意味の頻出表現です。" } },
+      { q:'What does emerging scholarship suggest about having too many alternatives?', choices:['It always improves decision quality','It can induce a form of paralysis beyond a certain threshold','It has no effect on decision-making','It only affects consumer behavior, never institutions'], answerIndex:1,
+        explain:{ correct:"'an abundance of alternatives can induce a form of paralysis' と明記されています。", wrong:"'always improves'は本文と逆で、'no effect'も矛盾します。'only affects consumer behavior'は、本文が制度的文脈にも触れている点と食い違います。", tip:"'while extensively documented in X, has received comparatively little attention within Y' は「Xでは研究が進んでいるがYではまだ手薄だ」という意味で、Yに無関係という意味ではありません。" } },
+      { q:'According to the passage, how do the stakes of institutional inaction compare to individual purchasing decisions?', choices:['They are generally less significant','They are frequently more consequential','They are exactly the same','The passage does not compare them'], answerIndex:1,
+        explain:{ correct:"'the stakes of inaction are frequently more consequential than in individual purchasing decisions' と明記されています。", wrong:"他の選択肢は本文の比較と矛盾するか、比較が行われていないという誤った主張です。", tip:"'more consequential than' のような比較級表現では、何と何を比較しているかを明確にしましょう。" } },
+    ],
+  },
+];
+
+var DEFAULT_PROGRESS = {
+  level: 'ALL', vocabKnownIds: [], vocabQuizAttempts: [], grammarAttempts: [], readingAttempts: [], streak: 0, lastStudyDate: null,
+};
+
+/* ------------------------------------------------------------------ */
+/* State & storage                                                      */
+/* ------------------------------------------------------------------ */
+
+var STORAGE_KEY = 'epx-b2c2-progress-v3';
+
+function defaultProgress() {
+  return { level:'ALL', vocabKnownIds:[], vocabQuizAttempts:[], grammarAttempts:[], readingAttempts:[], streak:0, lastStudyDate:null };
+}
+function loadProgress() {
+  try {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return Object.assign(defaultProgress(), JSON.parse(raw));
+  } catch (e) { /* no saved progress yet, or storage unavailable */ }
+  return defaultProgress();
+}
+function saveProgress() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(S.progress)); }
+  catch (e) { console.error('Failed to save progress', e); }
+}
+function todayStr() { return new Date().toISOString().slice(0,10); }
+
+function recordActivity(partial) {
+  var today = todayStr();
+  var streak = S.progress.streak;
+  if (S.progress.lastStudyDate !== today) {
+    var y = new Date(Date.now() - 86400000).toISOString().slice(0,10);
+    streak = (S.progress.lastStudyDate === y) ? S.progress.streak + 1 : 1;
+  }
+  Object.assign(S.progress, partial, { streak: streak, lastStudyDate: today });
+  saveProgress();
+}
+
+var S = {
+  tab: 'vocab',
+  progress: loadProgress(),
+  vocab: { mode:'flashcard', index:0, flipped:false, quiz:null, qIndex:0, selected:null, score:0, finished:false },
+  grammar: { session:null, qIndex:0, selected:null, answers:[], finished:false },
+  reading: { selectedId:null, answers:{} },
+};
+
+function setLevel(level) {
+  S.progress.level = level;
+  saveProgress();
+  S.vocab = { mode:'flashcard', index:0, flipped:false, quiz:null, qIndex:0, selected:null, score:0, finished:false };
+  S.grammar = { session:null, qIndex:0, selected:null, answers:[], finished:false };
+  render();
+}
+
+/* ------------------------------------------------------------------ */
+/* Helpers                                                              */
+/* ------------------------------------------------------------------ */
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+function buildVocabQuiz(pool, count) {
+  var items = shuffle(pool).slice(0, count);
+  return items.map(function(item){
+    var distractors = shuffle(pool.filter(function(v){ return v.id !== item.id; })).slice(0,3);
+    var choices = shuffle([item].concat(distractors));
+    return {
+      id: item.id, promptJa: item.ja,
+      choices: choices.map(function(c){ return { id:c.id, word:c.word }; }),
+      answerId: item.id,
+    };
+  });
+}
+function vocabPool() {
+  var level = S.progress.level;
+  return VOCAB.filter(function(v){ return level==='ALL' || v.level===level; });
+}
+function grammarAllPool() {
+  var level = S.progress.level;
+  return GRAMMAR.filter(function(g){ return level==='ALL' || g.level===level; });
+}
+function getVocabById(id) {
+  for (var i=0;i<VOCAB.length;i++) if (VOCAB[i].id===id) return VOCAB[i];
+  return null;
+}
+function computeReadiness() {
+  var p = S.progress;
+  var vocabPct = VOCAB.length ? (p.vocabKnownIds.length / VOCAB.length) * 100 : 0;
+  var gAtt = p.grammarAttempts.slice(-3);
+  var grammarPct = gAtt.length ? gAtt.reduce(function(s,a){return s+a.score/a.total;},0) / gAtt.length * 100 : null;
+  var rAtt = p.readingAttempts.slice(-3);
+  var readingPct = rAtt.length ? rAtt.reduce(function(s,a){return s+a.score/a.total;},0) / rAtt.length * 100 : null;
+  var parts = [vocabPct, grammarPct, readingPct].filter(function(x){ return x!==null && x!==undefined; });
+  if (!parts.length) return 0;
+  return Math.round(parts.reduce(function(a,b){return a+b;},0) / parts.length);
+}
+
+/* Instructor-style explanation panels ------------------------------- */
+
+function renderExplanation(e) {
+  var html = '<div class="epx-explain">';
+  html += '<div class="epx-explain-row"><span class="epx-explain-tag correct">正解の理由</span>' + e.correct + '</div>';
+  if (e.wrong) html += '<div class="epx-explain-row"><span class="epx-explain-tag wrong">他の選択肢</span>' + e.wrong + '</div>';
+  if (e.tip) html += '<div class="epx-explain-row"><span class="epx-explain-tag tip">ワンポイント</span>' + e.tip + '</div>';
+  html += '</div>';
+  return html;
+}
+function renderVocabExplanation(item) {
+  var html = '<div class="epx-explain">';
+  html += '<div class="epx-explain-row"><span class="epx-explain-tag correct">正解</span><strong>' + item.word + '</strong>（' + item.pos + '）— ' + item.ja + '</div>';
+  html += '<div class="epx-explain-row"><span class="epx-explain-tag tip">講師解説</span>' + item.note + '</div>';
+  html += '<div class="epx-explain-row"><span class="epx-explain-tag example">例文</span>' + item.example + '<br><span style="opacity:.65;">' + item.exampleJa + '</span></div>';
+  html += '</div>';
+  return html;
+}
+
+/* ------------------------------------------------------------------ */
+/* View builders                                                        */
+/* ------------------------------------------------------------------ */
+
+function buildTicketHeader() {
+  var gateInfo = {
+    vocab:{letter:'A',label:'VOCABULARY'}, grammar:{letter:'B',label:'GRAMMAR'},
+    reading:{letter:'C',label:'READING'}, progress:{letter:'D',label:'PROGRESS'},
+  }[S.tab];
+  var bars = [3,6,2,5,1,4,6,2,3,5,1,4,2,6,3,1,5,2,4,3];
+  var readiness = computeReadiness();
+  var levels = ['ALL','B2','C1','C2'];
+  var chips = levels.map(function(l){
+    return '<button class="epx-chip ' + (S.progress.level===l?'active':'') + '" data-action="set-level" data-level="' + l + '">' + (l==='ALL'?'全レベル':l) + '</button>';
+  }).join('');
+  var barsHtml = bars.map(function(h){ return '<div class="epx-bar" style="width:2px;height:' + (h*4) + 'px;"></div>'; }).join('');
+  return ''
+    + '<div class="epx-ticket">'
+    + '  <div class="epx-ticket-top">'
+    + '    <div style="display:flex;justify-content:space-between;align-items:flex-start;">'
+    + '      <div>'
+    + '        <div class="epx-eyebrow">ENGLISH BOARDING PASS</div>'
+    + '        <div class="epx-display" style="font-size:22px;font-weight:700;margin-top:4px;">ADVANCED PREP · B2–C2</div>'
+    + '      </div>'
+    + '      <div style="text-align:right;">'
+    + '        <div class="epx-eyebrow">GATE</div>'
+    + '        <div class="epx-mono" style="font-size:22px;font-weight:700;">' + gateInfo.letter + '</div>'
+    + '      </div>'
+    + '    </div>'
+    + '    <div style="display:flex;gap:22px;margin-top:18px;flex-wrap:wrap;">'
+    + '      <div><div class="epx-eyebrow">LEVEL</div><div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;">' + chips + '</div></div>'
+    + '      <div><div class="epx-eyebrow">STREAK</div><div class="epx-mono" style="font-size:18px;margin-top:6px;">' + S.progress.streak + '日</div></div>'
+    + '      <div><div class="epx-eyebrow">READINESS</div><div class="epx-mono" style="font-size:18px;margin-top:6px;">' + readiness + '%</div></div>'
+    + '    </div>'
+    + '  </div>'
+    + '  <div class="epx-perf-row"><div class="epx-punch left"></div><div class="epx-punch right"></div></div>'
+    + '  <div class="epx-perf-line"></div>'
+    + '  <div class="epx-ticket-bottom" style="display:flex;justify-content:space-between;align-items:flex-end;">'
+    + '    <div><div class="epx-eyebrow">SECTION</div><div class="epx-display" style="font-weight:700;">' + gateInfo.label + '</div></div>'
+    + '    <div class="epx-barcode">' + barsHtml + '</div>'
+    + '  </div>'
+    + '</div>';
+}
+
+function buildGateNav() {
+  var tabs = [
+    {key:'vocab',letter:'A',label:'語彙'}, {key:'grammar',letter:'B',label:'文法'},
+    {key:'reading',letter:'C',label:'リーディング'}, {key:'progress',letter:'D',label:'進捗'},
+  ];
+  return '<div class="epx-gatenav">' + tabs.map(function(t){
+    return '<button class="epx-gate-btn ' + (S.tab===t.key?'active':'') + '" data-action="set-tab" data-tab="' + t.key + '">'
+      + '<span class="epx-gate-letter">' + t.letter + '</span><span class="epx-gate-label">' + t.label + '</span></button>';
+  }).join('') + '</div>';
+}
+
+function buildVocabTab() {
+  var pool = vocabPool();
+  if (!pool.length) return '<div>該当する単語がありません。</div>';
+  var v = S.vocab;
+  if (v.index > pool.length - 1) v.index = 0;
+  var html = '<div class="epx-tabbar">'
+    + '<button class="epx-btn ' + (v.mode==='flashcard'?'epx-btn-primary':'epx-btn-secondary') + '" data-action="set-vocab-mode" data-mode="flashcard">フラッシュカード</button>'
+    + '<button class="epx-btn ' + (v.mode==='quiz'?'epx-btn-primary':'epx-btn-secondary') + '" data-action="set-vocab-mode" data-mode="quiz">クイズ</button>'
+    + '</div>';
+
+  if (v.mode === 'flashcard') {
+    var current = pool[v.index];
+    var known = S.progress.vocabKnownIds.indexOf(current.id) !== -1;
+    html += '<div class="epx-eyebrow">' + (v.index+1) + ' / ' + pool.length + ' ・ ' + current.level + ' ・ ' + current.topic + '</div>';
+    html += '<div class="epx-flashcard" data-action="flip-card">';
+    if (!v.flipped) {
+      html += '<div><div class="epx-display" style="font-size:28px;font-weight:700;">' + current.word + '</div>'
+        + '<div style="opacity:.6;margin-top:6px;">' + current.pos + '</div>'
+        + '<div style="opacity:.5;font-size:13px;margin-top:16px;">タップして意味を表示</div></div>';
+    } else {
+      html += '<div><div class="epx-display" style="font-size:21px;font-weight:700;">' + current.ja + '</div>'
+        + '<div style="margin-top:12px;font-size:14px;line-height:1.6;">' + current.example + '</div>'
+        + '<div style="margin-top:4px;font-size:13px;opacity:.6;">' + current.exampleJa + '</div></div>';
+    }
+    html += '</div>';
+    html += '<div style="font-size:13px;line-height:1.7;opacity:.8;margin-top:14px;padding-top:12px;border-top:1px dashed rgba(18,33,61,.15);">' + current.note + '</div>';
+    html += '<div style="display:flex;justify-content:space-between;margin-top:16px;gap:8px;">'
+      + '<button class="epx-btn epx-btn-secondary" data-action="card-prev" ' + (v.index===0?'disabled':'') + '>前へ</button>'
+      + '<button class="epx-btn" style="background:' + (known?'#2F6E68':'transparent') + ';color:' + (known?'#fff':'#12213D') + ';border:1px solid rgba(18,33,61,.3);" data-action="toggle-known">' + (known?'覚えた ✓':'覚えたにする') + '</button>'
+      + '<button class="epx-btn epx-btn-secondary" data-action="card-next" ' + (v.index===pool.length-1?'disabled':'') + '>次へ</button>'
+      + '</div>';
+  } else {
+    if (!v.quiz) {
+      html += '<div style="text-align:center;padding:20px 0;"><p style="margin-bottom:16px;">この範囲(全' + pool.length + '語)から' + Math.min(QUIZ_SIZE,pool.length) + '問をランダムに出題します。</p>'
+        + '<button class="epx-btn epx-btn-primary" data-action="start-vocab-quiz">クイズを始める</button></div>';
+    } else if (!v.finished) {
+      var q = v.quiz[v.qIndex];
+      html += '<div class="epx-eyebrow">Q ' + (v.qIndex+1) + ' / ' + v.quiz.length + '</div>'
+        + '<div class="epx-progress-track" style="margin:8px 0 18px;"><div class="epx-progress-fill" style="width:' + ((v.qIndex/v.quiz.length)*100) + '%;"></div></div>'
+        + '<div class="epx-display" style="font-size:18px;font-weight:700;margin-bottom:16px;">「' + q.promptJa + '」を表す単語は？</div>';
+      q.choices.forEach(function(c){
+        var cls = 'epx-choice';
+        if (v.selected !== null) {
+          if (c.id === q.answerId) cls += ' correct';
+          else if (c.id === v.selected) cls += ' incorrect';
+          else cls += ' dim';
+        }
+        html += '<button class="' + cls + '" data-action="select-vocab-answer" data-choice="' + c.id + '" ' + (v.selected!==null?'disabled':'') + '>' + c.word + '</button>';
+      });
+      if (v.selected !== null) {
+        var correctItem = getVocabById(q.answerId);
+        html += renderVocabExplanation(correctItem);
+        html += '<button class="epx-btn epx-btn-primary" data-action="next-vocab-question">' + (v.qIndex+1>=v.quiz.length?'結果を見る':'次の問題へ') + '</button>';
+      }
+    } else {
+      html += '<div style="text-align:center;padding:20px 0;"><div class="epx-eyebrow">RESULT</div>'
+        + '<div class="epx-display" style="font-size:32px;font-weight:700;margin:8px 0;">' + v.score + ' / ' + v.quiz.length + '</div>'
+        + '<button class="epx-btn epx-btn-primary" data-action="start-vocab-quiz">もう一度（新しい問題セット）</button></div>';
+    }
+  }
+  return html;
+}
+
+function buildGrammarTab() {
+  var allPool = grammarAllPool();
+  if (!allPool.length) return '<div>該当する問題がありません。</div>';
+  var g = S.grammar;
+
+  if (!g.session) {
+    return '<div style="text-align:center;padding:20px 0;"><p style="margin-bottom:16px;">この範囲(全' + allPool.length + '問)から' + Math.min(QUIZ_SIZE, allPool.length) + '問をランダムに出題します。</p>'
+      + '<button class="epx-btn epx-btn-primary" data-action="start-grammar-quiz">クイズを始める</button></div>';
+  }
+
+  if (g.finished) {
+    var finalScore = g.answers.filter(function(a){return a.correct;}).length;
+    var wrong = g.answers.filter(function(a){return !a.correct;});
+    var html = '<div style="text-align:center;padding:12px 0 24px;"><div class="epx-eyebrow">RESULT</div>'
+      + '<div class="epx-display" style="font-size:32px;font-weight:700;margin:8px 0;">' + finalScore + ' / ' + g.session.length + '</div>'
+      + '<button class="epx-btn epx-btn-primary" data-action="restart-grammar-quiz">もう一度（新しい問題セット）</button></div>';
+    if (wrong.length) {
+      html += '<div class="epx-eyebrow" style="margin-bottom:8px;">復習ポイント</div>';
+      wrong.forEach(function(w){
+        html += '<div style="border:1px solid rgba(18,33,61,.15);border-radius:10px;padding:14px;margin-bottom:12px;">'
+          + '<div style="font-size:14px;font-weight:700;">' + w.item.sentence.replace('___', '【' + w.item.choices[w.item.answerIndex] + '】') + '</div>'
+          + renderExplanation(w.item.explain)
+          + '</div>';
+      });
+    }
+    return html;
+  }
+
+  var current = g.session[g.qIndex];
+  var parts = current.sentence.split('___');
+  var html2 = '<div class="epx-eyebrow">Q ' + (g.qIndex+1) + ' / ' + g.session.length + ' ・ ' + current.level + '</div>'
+    + '<div class="epx-progress-track" style="margin:8px 0 18px;"><div class="epx-progress-fill" style="width:' + ((g.qIndex/g.session.length)*100) + '%;"></div></div>'
+    + '<div style="font-size:17px;line-height:1.7;margin-bottom:16px;">' + parts[0] + '<span class="epx-mono" style="border-bottom:2px solid #12213D;padding:0 6px;">______</span>' + parts[1] + '</div>';
+  current.choices.forEach(function(c,i){
+    var cls = 'epx-choice';
+    if (g.selected !== null) {
+      if (i===current.answerIndex) cls += ' correct';
+      else if (i===g.selected) cls += ' incorrect';
+      else cls += ' dim';
+    }
+    html2 += '<button class="' + cls + '" data-action="select-grammar-answer" data-index="' + i + '" ' + (g.selected!==null?'disabled':'') + '>' + String.fromCharCode(97+i) + ') ' + c + '</button>';
+  });
+  if (g.selected !== null) {
+    html2 += renderExplanation(current.explain);
+    html2 += '<button class="epx-btn epx-btn-primary" data-action="next-grammar-question">' + (g.qIndex+1>=g.session.length?'結果を見る':'次の問題へ') + '</button>';
+  }
+  return html2;
+}
+
+function buildReadingTab() {
+  var r = S.reading;
+  if (!r.selectedId) {
+    var html = '<div class="epx-eyebrow" style="margin-bottom:10px;">READING PASSAGES</div>';
+    READING.forEach(function(p){
+      var attempts = S.progress.readingAttempts.filter(function(a){return a.passageId===p.id;});
+      var best = attempts.length ? Math.max.apply(null, attempts.map(function(a){return Math.round(a.score/a.total*100);})) : null;
+      html += '<button class="epx-passage-btn" data-action="select-passage" data-id="' + p.id + '">'
+        + '<div style="display:flex;justify-content:space-between;"><div class="epx-display" style="font-weight:700;">' + p.title + '</div>'
+        + '<div class="epx-mono" style="font-size:12px;opacity:.6;">' + p.level + '</div></div>'
+        + '<div style="font-size:13px;opacity:.6;margin-top:4px;">設問' + p.questions.length + '問' + (best!==null?' ・ 自己ベスト ' + best + '%':'') + '</div></button>';
+    });
+    return html;
+  }
+  var passage = READING.filter(function(p){return p.id===r.selectedId;})[0];
+  var score = passage.questions.filter(function(q,i){return r.answers[i]===q.answerIndex;}).length;
+  var allAnswered = passage.questions.every(function(q,i){return r.answers[i]!==undefined;});
+  var html2 = '<button class="epx-btn epx-btn-secondary" style="margin-bottom:14px;" data-action="back-to-passages">← 一覧に戻る</button>'
+    + '<div class="epx-eyebrow">' + passage.level + '</div>'
+    + '<div class="epx-display" style="font-size:19px;font-weight:700;margin:6px 0 14px;">' + passage.title + '</div>'
+    + '<div style="font-size:14px;line-height:1.8;white-space:pre-line;background:#fff;border:1px solid rgba(18,33,61,.12);border-radius:12px;padding:18px;margin-bottom:20px;">' + passage.text + '</div>';
+  passage.questions.forEach(function(q,qi){
+    html2 += '<div style="margin-bottom:20px;"><div style="font-weight:700;margin-bottom:8px;">' + (qi+1) + '. ' + q.q + '</div>';
+    q.choices.forEach(function(c,ci){
+      var sel = r.answers[qi];
+      var cls = 'epx-choice';
+      if (sel !== undefined) {
+        if (ci===q.answerIndex) cls += ' correct';
+        else if (ci===sel) cls += ' incorrect';
+        else cls += ' dim';
+      }
+      html2 += '<button class="' + cls + '" data-action="select-reading-answer" data-qi="' + qi + '" data-ci="' + ci + '" ' + (sel!==undefined?'disabled':'') + '>' + String.fromCharCode(97+ci) + ') ' + c + '</button>';
+    });
+    if (r.answers[qi] !== undefined) html2 += renderExplanation(q.explain);
+    html2 += '</div>';
+  });
+  if (allAnswered) {
+    html2 += '<div style="text-align:center;padding:12px 0;"><div class="epx-display" style="font-size:22px;font-weight:700;">スコア: ' + score + ' / ' + passage.questions.length + '</div></div>';
+  }
+  return html2;
+}
+
+function statBlock(label,value,sub){
+  return '<div style="border:1px solid rgba(18,33,61,.12);border-radius:12px;padding:16px;">'
+    + '<div style="font-size:12px;opacity:.6;">' + label + '</div>'
+    + '<div class="epx-display" style="font-size:23px;font-weight:700;margin:4px 0;">' + value + '</div>'
+    + '<div style="font-size:11px;opacity:.5;">' + sub + '</div></div>';
+}
+function buildProgressTab() {
+  var p = S.progress;
+  var vocabPct = Math.round((p.vocabKnownIds.length / VOCAB.length) * 100);
+  var grammarAvg = p.grammarAttempts.length ? Math.round(p.grammarAttempts.reduce(function(s,a){return s+a.score/a.total;},0)/p.grammarAttempts.length*100) : null;
+  var readingCompleted = {};
+  p.readingAttempts.forEach(function(a){ readingCompleted[a.passageId]=true; });
+  var readingCompletedCount = Object.keys(readingCompleted).length;
+  var readingAvg = p.readingAttempts.length ? Math.round(p.readingAttempts.reduce(function(s,a){return s+a.score/a.total;},0)/p.readingAttempts.length*100) : null;
+  return '<div class="epx-eyebrow" style="margin-bottom:14px;">LEARNING RECORD</div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">'
+    + statBlock('語彙 習得率', vocabPct+'%', p.vocabKnownIds.length + ' / ' + VOCAB.length + '語')
+    + statBlock('文法 平均正答率', grammarAvg!==null?grammarAvg+'%':'—', p.grammarAttempts.length + '回挑戦')
+    + statBlock('リーディング 平均正答率', readingAvg!==null?readingAvg+'%':'—', readingCompletedCount + ' / ' + READING.length + '文章完了')
+    + statBlock('継続日数', p.streak+'日', p.lastStudyDate?('最終学習: ' + p.lastStudyDate):'未学習')
+    + '</div>'
+    + '<button class="epx-btn epx-btn-secondary" style="margin-top:24px;" data-action="reset-progress">学習記録をリセット</button>';
+}
+
+/* ------------------------------------------------------------------ */
+/* Render + event dispatch                                              */
+/* ------------------------------------------------------------------ */
+
+function render() {
+  var body = '';
+  if (S.tab === 'vocab') body = buildVocabTab();
+  else if (S.tab === 'grammar') body = buildGrammarTab();
+  else if (S.tab === 'reading') body = buildReadingTab();
+  else if (S.tab === 'progress') body = buildProgressTab();
+
+  document.getElementById('app').innerHTML =
+    buildTicketHeader()
+    + buildGateNav()
+    + '<div class="epx-card">' + body + '</div>'
+    + '<div class="epx-eyebrow" style="text-align:center;margin-top:24px;">CEFR B2–C2 ・ 語彙90語 ・ 文法90問 ・ クイズは毎回ランダムに出題 ・ 学習記録はこの端末に自動保存されます</div>';
+}
+
+function handleAction(action, el) {
+  var v = S.vocab, g = S.grammar, r = S.reading;
+  if (action === 'set-tab') { S.tab = el.getAttribute('data-tab'); render(); return; }
+  if (action === 'set-level') { setLevel(el.getAttribute('data-level')); return; }
+
+  if (action === 'set-vocab-mode') {
+    v.mode = el.getAttribute('data-mode'); v.index=0; v.flipped=false; v.quiz=null; v.finished=false;
+    render(); return;
+  }
+  if (action === 'flip-card') { v.flipped = !v.flipped; render(); return; }
+  if (action === 'card-prev') { var pool1=vocabPool(); if (v.index>0){v.index--; v.flipped=false;} render(); return; }
+  if (action === 'card-next') { var pool2=vocabPool(); if (v.index<pool2.length-1){v.index++; v.flipped=false;} render(); return; }
+  if (action === 'toggle-known') {
+    var pool3 = vocabPool(); var current3 = pool3[v.index];
+    var set = S.progress.vocabKnownIds.slice();
+    var idx = set.indexOf(current3.id);
+    if (idx !== -1) set.splice(idx,1); else set.push(current3.id);
+    recordActivity({ vocabKnownIds: set });
+    render(); return;
+  }
+  if (action === 'start-vocab-quiz') {
+    var pool4 = vocabPool();
+    v.quiz = buildVocabQuiz(pool4, Math.min(QUIZ_SIZE, pool4.length));
+    v.qIndex=0; v.selected=null; v.score=0; v.finished=false;
+    render(); return;
+  }
+  if (action === 'select-vocab-answer') {
+    if (v.selected !== null) return;
+    var choiceId = el.getAttribute('data-choice');
+    v.selected = choiceId;
+    if (choiceId === v.quiz[v.qIndex].answerId) v.score++;
+    render(); return;
+  }
+  if (action === 'next-vocab-question') {
+    if (v.qIndex+1 >= v.quiz.length) {
+      recordActivity({ vocabQuizAttempts: S.progress.vocabQuizAttempts.concat([{date:todayStr(), score:v.score, total:v.quiz.length}]) });
+      v.finished = true;
+    } else { v.qIndex++; v.selected=null; }
+    render(); return;
+  }
+
+  if (action === 'start-grammar-quiz' || action === 'restart-grammar-quiz') {
+    var allPoolG = grammarAllPool();
+    g.session = shuffle(allPoolG).slice(0, Math.min(QUIZ_SIZE, allPoolG.length));
+    g.qIndex = 0; g.selected = null; g.answers = []; g.finished = false;
+    render(); return;
+  }
+  if (action === 'select-grammar-answer') {
+    if (g.selected !== null) return;
+    var i = parseInt(el.getAttribute('data-index'),10);
+    var currentG = g.session[g.qIndex];
+    g.selected = i;
+    g.answers.push({ item: currentG, selectedIndex:i, correct: i===currentG.answerIndex });
+    render(); return;
+  }
+  if (action === 'next-grammar-question') {
+    if (g.qIndex+1 >= g.session.length) {
+      var finalScore = g.answers.filter(function(a){return a.correct;}).length;
+      recordActivity({ grammarAttempts: S.progress.grammarAttempts.concat([{date:todayStr(), score:finalScore, total:g.session.length}]) });
+      g.finished = true;
+    } else { g.qIndex++; g.selected=null; }
+    render(); return;
+  }
+
+  if (action === 'select-passage') { r.selectedId = el.getAttribute('data-id'); r.answers = {}; render(); return; }
+  if (action === 'back-to-passages') { r.selectedId = null; r.answers = {}; render(); return; }
+  if (action === 'select-reading-answer') {
+    var qi = parseInt(el.getAttribute('data-qi'),10);
+    var ci = parseInt(el.getAttribute('data-ci'),10);
+    if (r.answers[qi] !== undefined) return;
+    r.answers[qi] = ci;
+    var passage = READING.filter(function(p){return p.id===r.selectedId;})[0];
+    var allAnswered = passage.questions.every(function(q,idx){return r.answers[idx]!==undefined;});
+    if (allAnswered) {
+      var score = passage.questions.filter(function(q,idx){return r.answers[idx]===q.answerIndex;}).length;
+      recordActivity({ readingAttempts: S.progress.readingAttempts.concat([{passageId:passage.id, date:todayStr(), score:score, total:passage.questions.length}]) });
+    }
+    render(); return;
+  }
+
+  if (action === 'reset-progress') {
+    if (!confirm('学習記録をすべてリセットしますか？この操作は取り消せません。')) return;
+    S.progress = defaultProgress();
+    saveProgress();
+    render(); return;
+  }
+}
+
+document.getElementById('app').addEventListener('click', function(e){
+  var el = e.target.closest('[data-action]');
+  if (!el) return;
+  handleAction(el.getAttribute('data-action'), el);
+});
+
+render();
+</script>
+</body>
+</html>
